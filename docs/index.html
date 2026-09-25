@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Readiness Scorecard</title>
+<meta name="description" content="15 questions, 3 minutes: is your AI agent ready for production? Find your weakest area and the failure mode it exposes you to.">
+<meta property="og:title" content="Agent Readiness Scorecard">
+<meta property="og:description" content="15 questions, 3 minutes: is your AI agent ready for production?">
+<style>
+:root{
+  --bg:#f7f6f2;--card:#ffffff;--ink:#1b1b1f;--muted:#5f5f6b;--line:#e3e1da;
+  --accent:#3b5bdb;--accent-ink:#ffffff;--good:#2b8a3e;--mid:#b7791f;--bad:#c92a2a;
+  --chip:#eef0fb;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#131316;--card:#1d1d22;--ink:#ececf1;--muted:#a3a3b0;--line:#2e2e36;
+  --accent:#7c93ff;--accent-ink:#0d0d10;--good:#69db7c;--mid:#ffc14d;--bad:#ff8787;--chip:#252a45;color-scheme:dark}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:40px 16px 64px}
+header h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.15;margin:0 0 .4rem;letter-spacing:-.02em}
+header p{color:var(--muted);margin:.2rem 0 0;font-size:1.05rem}
+.meta{font-size:.9rem;color:var(--muted);margin-top:.8rem}
+.meta a{color:var(--accent)}
+.progress{position:sticky;top:0;background:var(--bg);padding:12px 0;margin:24px 0 8px;z-index:2}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.progress small{color:var(--muted)}
+section.area{margin-top:28px}
+section.area h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:10px}
+.q p{margin:0 0 12px;font-weight:550}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts button{flex:1 1 90px;min-height:40px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;font:inherit;font-size:.95rem;cursor:pointer}
+.opts button:hover{border-color:var(--accent)}
+.opts button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.btn{border:0;background:var(--accent);color:var(--accent-ink);padding:12px 20px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+#result{margin-top:32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.score b{font-size:4rem;line-height:1;letter-spacing:-.03em}
+.score span{font-size:1.25rem;font-weight:600}
+.areas{margin:20px 0 4px;display:grid;gap:10px}
+.arow{display:grid;grid-template-columns:minmax(110px,160px) 1fr 44px;gap:10px;align-items:center;font-size:.92rem}
+.abar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.abar i{display:block;height:100%}
+.weak{margin-top:18px;background:var(--chip);border-radius:12px;padding:14px 16px}
+.weak h3{margin:0 0 6px;font-size:1rem}
+.weak p{margin:.3rem 0}
+.weak a{color:var(--accent)}
+.brand{margin-top:16px;font-size:.82rem;color:var(--muted)}
+.note{font-size:.85rem;color:var(--muted);margin-top:18px}
+#toast{font-size:.9rem;color:var(--good);align-self:center}
+footer{margin-top:48px;font-size:.88rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Is your AI agent ready for production?</h1>
+    <p>15 questions, about 3 minutes. Get a readiness score, your weakest area, and the specific failure mode it leaves you open to.</p>
+    <div class="meta">Part of the open-source <a href="https://github.com/vishalhabib99/agentic-product-playbook">Agentic Product Playbook</a>. Nothing you answer leaves your browser.</div>
+  </header>
+
+  <div class="progress"><div class="bar"><i id="pbar"></i></div><small id="ptext">0 of 15 answered</small></div>
+
+  <div id="quiz"></div>
+
+  <div class="cta">
+    <button class="btn" id="go" disabled>See my score</button>
+    <button class="btn ghost" id="reset">Start over</button>
+  </div>
+
+  <div id="result" hidden></div>
+
+  <footer>
+    Built by <a href="https://github.com/vishalhabib99">Vishal Habib</a>, a product leader shipping agentic AI in financial services and telecom.
+    Templates behind every question: <a href="https://github.com/vishalhabib99/agentic-product-playbook">github.com/vishalhabib99/agentic-product-playbook</a>.
+  </footer>
+</div>
+
+<script>
+const REPO = "https://github.com/vishalhabib99/agentic-product-playbook/blob/main/";
+const AREAS = [
+  {name:"Problem & scope", fix:"agent-prd.md", fm:null,
+   tip:"You may be building an agent where a simpler tool would do, or one with no written limits. Fill in sections 1–3 of the Agent PRD before anything else.",
+   qs:["We can say in one sentence why this needs an agent, not a form, rule, or search box.",
+       "There's a written list of what the agent will NOT do, even if a user asks.",
+       "Every action the agent can take has an autonomy level (acts alone / acts then tells / proposes / hands off)."]},
+  {name:"Evals", fix:"eval-plan.md", fm:"4-grading-the-exam-after-seeing-the-answers",
+   tip:"Your launch gates can drift to match whatever results you get, and the costly errors can hide in the average. See failure modes #4 and #5.",
+   qs:["Launch thresholds were signed off BEFORE the first eval run.",
+       "The single most harmful error has its own test cases and its own threshold, separate from overall accuracy.",
+       "Our tests include cases where a tool returns 'success' but the content is empty or a refusal."]},
+  {name:"Tools & actions", fix:"launch-readiness-checklist.md", fm:"2-tools-lie-about-what-they-touch",
+   tip:"Your agent trusts tool labels and descriptions nobody has verified. In one real audit, 13 of 15 tools had wrong safety labels. See failure modes #2 and #6.",
+   qs:["Someone verified every tool's real side effects against its read-only/destructive label.",
+       "Every tool and parameter has a description a new engineer could act on without asking.",
+       "Irreversible actions require user confirmation or a human."]},
+  {name:"Human handoff", fix:"metrics-glossary.md", fm:"3-containment-that-is-really-abandonment",
+   tip:"High containment may really be users giving up. Measure resolution and false containment alongside it. See failure mode #3.",
+   qs:["Handoff triggers are written down AND tested, including 'user asks for a person'.",
+       "The human who takes over gets full context, so the user never repeats themselves.",
+       "We track resolution and false containment, not just containment."]},
+  {name:"Launch & operations", fix:"launch-readiness-checklist.md", fm:"7-nobody-owns-it-after-launch",
+   tip:"Quality will drift after launch and nobody will notice. Put the launch eval on a schedule and name an owner. See failure mode #7.",
+   qs:["Staged rollout with a named owner who can kill it within minutes.",
+       "The launch eval re-runs automatically on every model, prompt, or tool change.",
+       "A named person reviews a sample of real production conversations every week."]}
+];
+const OPTS = [["Yes",2],["Partly",1],["No",0]];
+const N = AREAS.reduce((n,a)=>n+a.qs.length,0);
+let answers = new Array(N).fill(null);
+
+const quiz = document.getElementById("quiz");
+let idx = 0;
+AREAS.forEach(a=>{
+  const s = document.createElement("section"); s.className="area";
+  s.innerHTML = `<h2>${a.name}</h2>`;
+  a.qs.forEach(q=>{
+    const i = idx++;
+    const d = document.createElement("div"); d.className="q";
+    d.innerHTML = `<p>${i+1}. ${q}</p><div class="opts" role="group" aria-label="Question ${i+1}"></div>`;
+    const o = d.querySelector(".opts");
+    OPTS.forEach(([label,val])=>{
+      const b = document.createElement("button");
+      b.type="button"; b.textContent=label; b.setAttribute("aria-pressed","false");
+      b.dataset.q=i; b.dataset.v=val;
+      b.onclick=()=>{answers[i]=val; paint();};
+      o.appendChild(b);
+    });
+    s.appendChild(d);
+  });
+  quiz.appendChild(s);
+});
+
+function paint(){
+  document.querySelectorAll(".opts button").forEach(b=>{
+    b.setAttribute("aria-pressed", String(answers[+b.dataset.q]===+b.dataset.v));
+  });
+  const done = answers.filter(v=>v!==null).length;
+  document.getElementById("pbar").style.width = (done/N*100)+"%";
+  document.getElementById("ptext").textContent = `${done} of ${N} answered`;
+  document.getElementById("go").disabled = done<N;
+}
+
+function band(s){
+  if(s>=85) return ["Launch-ready","var(--good)"];
+  if(s>=65) return ["Close, with gaps","var(--mid)"];
+  if(s>=40) return ["Not ready yet","var(--mid)"];
+  return ["Still a prototype","var(--bad)"];
+}
+
+function score(){
+  let k=0;
+  const per = AREAS.map(a=>{
+    let sum=0; a.qs.forEach(()=>{sum+=answers[k++];});
+    return Math.round(sum/(a.qs.length*2)*100);
+  });
+  const total = Math.round(answers.reduce((x,y)=>x+y,0)/(N*2)*100);
+  return {total, per};
+}
+
+function show(shared){
+  const {total, per} = score();
+  const [label,color] = band(total);
+  const min = Math.min(...per);
+  const wi = per.indexOf(min);
+  const w = AREAS[wi];
+  const fmLink = w.fm ? `<a href="${REPO}failure-modes.md#${w.fm}">Read the failure mode</a> · ` : "";
+  const r = document.getElementById("result");
+  r.innerHTML = `
+  <div class="card" id="card">
+    <div class="score"><b style="color:${color}">${total}</b><span>/ 100 · ${label}</span></div>
+    <div class="areas">
+      ${AREAS.map((a,i)=>`<div class="arow"><span>${a.name}</span><div class="abar"><i style="width:${per[i]}%;background:${per[i]===min?'var(--bad)':'var(--accent)'}"></i></div><span>${per[i]}</span></div>`).join("")}
+    </div>
+    ${min<100 ? `<div class="weak"><h3>Weakest area: ${w.name}</h3><p>${w.tip}</p>
+      <p>${fmLink}<a href="${REPO}templates/${w.fix}">Use the template</a></p></div>`
+      : `<div class="weak"><h3>No gaps found</h3><p>Every answer was "yes". Have someone outside the team answer the same 15 questions and compare.</p></div>`}
+    <div class="brand">Agent Readiness Scorecard · vishalhabib99.github.io/agentic-product-playbook</div>
+  </div>
+  <div class="cta">
+    <button class="btn" id="share">Copy shareable result</button>
+    <a class="btn ghost" href="${REPO}templates/launch-readiness-checklist.md">Full checklist</a>
+    <span id="toast" hidden>Copied</span>
+  </div>
+  <p class="note">This is a structured checklist, not a benchmark. The score reflects your own answers, and it's most useful when two people on the team answer separately and compare.</p>`;
+  if(shared){
+    document.querySelector("header").after(r);
+    r.insertAdjacentHTML("afterbegin",'<p class="note" style="margin:0 0 10px">Someone shared their result with you. <a href="#" id="mine" style="color:var(--accent)">Score your own agent &rarr;</a></p>');
+    document.getElementById("mine").onclick=e=>{e.preventDefault();document.getElementById("reset").click();};
+  }
+  r.hidden=false;
+  history.replaceState(null,"","#r="+answers.join(""));
+  document.getElementById("share").onclick=async()=>{
+    const url = location.origin+location.pathname+"#r="+answers.join("");
+    const text = `My AI agent scored ${total}/100 on the Agent Readiness Scorecard (${label}). Weakest area: ${w.name}.\n\n15 questions, 3 minutes: ${url}`;
+    try{ await navigator.clipboard.writeText(text); const t=document.getElementById("toast"); t.hidden=false; setTimeout(()=>t.hidden=true,2000);}catch(e){ prompt("Copy this:", text); }
+  };
+  if(!shared) r.scrollIntoView({behavior:"smooth"});
+}
+
+document.getElementById("go").onclick=()=>show(false);
+document.getElementById("reset").onclick=()=>{
+  answers=new Array(N).fill(null); paint();
+  const r=document.getElementById("result"); r.hidden=true;
+  document.querySelector(".cta").after(r);
+  history.replaceState(null,"",location.pathname); window.scrollTo({top:0,behavior:"smooth"});
+};
+
+// Restore a shared result from the link
+const m = location.hash.match(/^#r=([012]+)$/);
+if(m && m[1].length===N){ answers=[...m[1]].map(Number); paint(); show(true); } else { paint(); }
+</script>
+</body>
+</html>
