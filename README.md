@@ -20,6 +20,12 @@ None of these show up in a demo. All of them show up in week two. **[Read all se
 6. **Tool descriptions the model can't use.** It picks tools by their docs. Missing docs mean it guesses.
 7. **Nobody owns it after launch.** The model or a prompt changes, quality drifts, and nobody notices.
 
+## See it: how GenAI and agentic requests flow
+
+### [→ Open the interactive request-flow diagrams](https://vishalhabib99.github.io/agentic-product-playbook/request-flow/)
+
+Nine production patterns as clickable sequence diagrams, from user input to output: assistant → RAG → tool agent, multi-agent team, coding agent, computer-use agent, deep research, real-time voice, image generation, background agent, and document AI. Every step shows what it does, what it protects against, and what happens when it fails. Includes a RAG explorer (vector, hybrid + rerank, GraphRAG, agentic, SQL) and a pattern map. Reviewed regularly as the field moves; see "What changed" at the bottom of the page.
+
 ## Templates
 
 Copy them, fork them, and make them yours.

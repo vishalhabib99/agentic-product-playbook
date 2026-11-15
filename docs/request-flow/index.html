@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Nine GenAI and agentic AI patterns as clickable sequence diagrams, from user input to output: assistant/RAG/tool agent, multi-agent, coding agent, computer use, deep research, voice, image generation, background agent, document AI.">
+<meta property="og:title" content="Agentic Request Flow">
+<meta property="og:description" content="Nine GenAI and agentic AI patterns as clickable sequence diagrams, input to output.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Agentic Request Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header, pattern gallery, then a scrollable sequence diagram beside a sticky step inspector; RAG explorer, pattern map, failure paths and changelog below. */
+:root {
+  --bg: #F3F5F8;
+  --surface: #FFFFFF;
+  --ink: #17202C;
+  --muted: #5B6676;
+  --line: #D5DBE4;
+  --accent: #2C57E0;
+  --accent-soft: rgba(44, 87, 224, 0.09);
+  --safety: #B0650A;
+  --safety-soft: rgba(176, 101, 10, 0.10);
+  --llm: #0E7C76;
+  --llm-soft: rgba(14, 124, 118, 0.10);
+  --phase: #E8ECF2;
+  --f-display: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1217; --surface: #151A21; --ink: #E5E9EF; --muted: #98A2B1; --line: #2A323D;
+    --accent: #7E9BFF; --accent-soft: rgba(126, 155, 255, 0.13);
+    --safety: #EFA43C; --safety-soft: rgba(239, 164, 60, 0.13);
+    --llm: #3EC6BE; --llm-soft: rgba(62, 198, 190, 0.13);
+    --phase: #1C222B; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1217; --surface: #151A21; --ink: #E5E9EF; --muted: #98A2B1; --line: #2A323D;
+  --accent: #7E9BFF; --accent-soft: rgba(126, 155, 255, 0.13);
+  --safety: #EFA43C; --safety-soft: rgba(239, 164, 60, 0.13);
+  --llm: #3EC6BE; --llm-soft: rgba(62, 198, 190, 0.13);
+  --phase: #1C222B; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap {
+  max-width: 1320px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 56px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+header { display: flex; flex-direction: column; gap: 10px; max-width: 820px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.lede { margin: 0; color: var(--muted); max-width: 720px; }
+.stamp { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+h3 { font-family: var(--f-display); font-size: 21px; margin: 0; }
+.section { display: flex; flex-direction: column; gap: 14px; }
+.intro { margin: 0; color: var(--muted); max-width: 760px; }
+.intro b { color: var(--ink); font-weight: 600; }
+
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.gallery button {
+  text-align: left; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 3px;
+}
+.gallery button b { font-family: var(--f-display); font-size: 15.5px; font-weight: 600; }
+.gallery button span { font-size: 13px; color: var(--muted); line-height: 1.4; }
+.gallery button:hover { border-color: var(--muted); }
+.gallery button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+
+.example { font-family: var(--f-mono); font-size: 13.5px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.example span { color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 3px; gap: 2px; }
+.seg.wrap { flex-wrap: wrap; }
+.seg button { font: 500 14px var(--f-body); color: var(--muted); background: transparent; border: 0; border-radius: 7px; padding: 7px 14px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#modeNote { color: var(--muted); font-size: 14px; max-width: 560px; margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+@media (max-width: 1080px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; min-width: 0; }
+.diagram svg { display: block; max-width: none; height: auto; }
+.lane-box { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.lane-box.core { fill: var(--phase); }
+.lane-name { font: 600 13.5px var(--f-display); fill: var(--ink); }
+.lane-sub { font: 400 10.5px var(--f-mono); fill: var(--muted); }
+.lifeline { stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 3 5; }
+.ph-bg { fill: var(--phase); }
+.ph-t { font: 500 10.5px var(--f-mono); letter-spacing: 0.08em; fill: var(--muted); }
+.ph-n { font: 400 10.5px var(--f-mono); fill: var(--muted); }
+.step { cursor: pointer; outline: none; }
+.step .hit { fill: transparent; }
+.step .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+.step .hd { fill: var(--muted); }
+.step.k-safety .ln { stroke: var(--safety); }
+.step.k-safety .hd { fill: var(--safety); }
+.step.k-llm .ln { stroke: var(--llm); }
+.step.k-llm .hd { fill: var(--llm); }
+.lbl { font: 400 11.5px var(--f-mono); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.lbl .num { font-weight: 500; fill: var(--muted); }
+.step:hover .hit { fill: var(--phase); }
+.step:focus-visible .hit { stroke: var(--accent); stroke-width: 1.5; }
+.step.active .hit { fill: var(--accent-soft); }
+.step.active .ln { stroke: var(--accent); stroke-width: 2.5; }
+.step.active .hd { fill: var(--accent); }
+.step.active .lbl .num { fill: var(--accent); }
+.step.off { opacity: 0.13; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { .step { transition: opacity 0.25s ease; } }
+
+aside {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px;
+  display: flex; flex-direction: column; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); min-width: 0;
+}
+@media (max-width: 1080px) { aside { position: static; } }
+.p-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.pill { font-family: var(--f-mono); font-size: 11px; padding: 3px 8px; border-radius: 999px; background: var(--phase); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.pill.safety { background: var(--safety-soft); color: var(--safety); }
+.pill.llm { background: var(--llm-soft); color: var(--llm); }
+.pill.used { background: var(--accent-soft); color: var(--accent); }
+aside h2 { font-family: var(--f-display); font-size: 22px; line-height: 1.2; margin: 0; text-wrap: balance; }
+.route { font-family: var(--f-mono); font-size: 13px; color: var(--muted); margin: -6px 0 0; }
+#pWhat { margin: 0; }
+.kv { display: flex; flex-direction: column; gap: 4px; }
+.kv b { font-family: var(--f-mono); font-weight: 500; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.kv p { margin: 0; font-size: 14px; }
+.kv.fail p { color: var(--safety); }
+pre { margin: 0; font: 400 12.5px/1.5 var(--f-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; word-break: break-word; }
+.nav { display: flex; gap: 8px; margin-top: 4px; }
+.btn { flex: 1; font: 500 14px var(--f-body); padding: 9px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+.fails { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.fail-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.fail-card .when { font-weight: 600; font-size: 14.5px; }
+.fail-card .then { color: var(--muted); font-size: 14px; margin: 0; }
+.jump { align-self: flex-start; font: 500 12px var(--f-mono); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; }
+
+.rag-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.rag-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.rag-head b { font-family: var(--f-display); font-size: 20px; }
+.rag-how { margin: 0; max-width: 760px; }
+.pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.pipe-label { font: 500 11px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); width: 96px; }
+.chip { font: 400 12.5px var(--f-mono); padding: 4px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.ar { color: var(--muted); font-size: 13px; }
+.rag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.thumb { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 16px; font-size: 14px; color: var(--muted); margin: 0; padding: 0; list-style: none; }
+.thumb b { color: var(--ink); font-weight: 600; }
+
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 11px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+td .jump { font-size: 12px; }
+.log { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.log time { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); margin-right: 10px; }
+blockquote { margin: 0; padding: 18px 22px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 10px 10px 0; font-size: 16.5px; line-height: 1.6; max-width: 860px; }
+blockquote strong { font-family: var(--f-display); }
+footer { font-size: 13px; color: var(--muted); }
+footer a { color: var(--accent); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sequence diagrams · GenAI and agentic AI, input to output</div>
+    <h1>How GenAI and agentic AI requests move through a system</h1>
+    <p class="lede">Nine production patterns, each as a clickable sequence diagram. Pick a pattern, then click any step to see what happens, what it protects against, and what happens when it fails.</p>
+    <div class="stamp" id="stamp"></div>
+  </header>
+
+  <section class="section">
+    <h3>Pick a pattern</h3>
+    <div class="gallery" id="gallery" role="group" aria-label="Pattern"></div>
+  </section>
+
+  <div class="example" id="example"></div>
+
+  <div class="controls" id="levelCtl">
+    <div class="seg" role="group" aria-label="Architecture level">
+      <button id="m1" aria-pressed="false">Plain GenAI</button>
+      <button id="m2" aria-pressed="false">+ RAG</button>
+      <button id="m3" aria-pressed="true">Agentic</button>
+    </div>
+    <p id="modeNote"></p>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--llm)"></i>Model step</span>
+    <span><i style="background:var(--safety)"></i>Safety control</span>
+    <span><i style="background:var(--muted)"></i>Data / action</span>
+    <span>Click any step, or use ← → keys</span>
+  </div>
+
+  <div class="main">
+    <div class="diagram" id="diagram"></div>
+    <aside aria-live="polite">
+      <div class="p-top"><span id="pNum"></span><span class="pill" id="pPhase"></span></div>
+      <h2 id="pTitle"></h2>
+      <p class="route" id="pRoute"></p>
+      <p id="pWhat"></p>
+      <div class="kv" id="pProtWrap"><b>Protects against</b><p id="pProt"></p></div>
+      <div class="kv fail" id="pFailWrap"><b>If it fails</b><p id="pFail"></p></div>
+      <div class="kv" id="pPayWrap"><b>Example payload</b><pre id="pPay"></pre></div>
+      <div class="nav">
+        <button class="btn" id="prev">Previous</button>
+        <button class="btn primary" id="play">Play flow</button>
+        <button class="btn" id="next">Next</button>
+      </div>
+      <p class="hint">Every arrow also writes a trace span (latency, tokens, cost) that feeds observability and evals.</p>
+    </aside>
+  </div>
+
+  <section class="section">
+    <h3 id="failHead">Failure paths</h3>
+    <div class="fails" id="fails"></div>
+  </section>
+
+  <section class="section">
+    <h3>Pattern map</h3>
+    <p class="intro">Same building blocks every time: input checks, context, a model, tools, output checks, feedback. What changes is <b>who controls the flow</b> and <b>where the human sits</b>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pattern</th><th>Who controls the flow</th><th>Main risk</th><th>Key control</th><th>Seen in</th></tr></thead>
+        <tbody id="mapBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h3>Which RAG? Steps 5–6 of the assistant pattern</h3>
+    <p class="intro">The bill-pay example uses <b>Hybrid + rerank</b> for policy documents, plus a memory lookup. The live balance is not RAG: it comes from a tool call in steps 11–12. Pick a type to see how steps 5–6 change.</p>
+    <div class="seg wrap" role="group" aria-label="RAG type" id="ragSeg"></div>
+    <div class="rag-card" id="ragCard" aria-live="polite"></div>
+    <ul class="thumb">
+      <li><b>Text questions over docs:</b> Hybrid + rerank</li>
+      <li><b>Relationships across entities:</b> GraphRAG</li>
+      <li><b>Numbers and records:</b> Structured / SQL</li>
+      <li><b>Vague or multi-part questions:</b> Agentic RAG</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h3>The one line for interviews</h3>
+    <blockquote><strong>“The model proposes. The orchestrator disposes.</strong> Every tool call passes a policy check, runs with the user's scoped credentials, needs human approval for irreversible actions, and gets a grounding check on the way out.”</blockquote>
+  </section>
+
+  <section class="section">
+    <h3>What changed</h3>
+    <ul class="log" id="log"></ul>
+  </section>
+
+  <footer>Maintained by Vishal Habib · <a href="https://github.com/vishalhabib99/agentic-product-playbook">agentic-product-playbook</a> · Examples are illustrative; payloads are simplified.</footer>
+</div>
+
+<script>
+(function () {
+  var REVIEWED = "Nov 15, 2026";
+  var LOG = [
+    ["Nov 15, 2026", "Added 8 patterns: multi-agent, coding agent, computer use, deep research, voice, image generation, background agent, document AI. Added pattern map."],
+    ["Nov 15, 2026", "Added the RAG explorer: vector, hybrid + rerank, GraphRAG, agentic RAG, structured / SQL."],
+    ["Nov 15, 2026", "First version: assistant → RAG → tool agent, 26 steps."]
+  ];
+
+  function st(f, t, l, k, title, what, prot, fail, pay, lv) {
+    return { f: f, t: t, l: l, k: k || "", title: title, what: what, prot: prot || "", fail: fail || "", pay: pay || "", lv: lv || 1 };
+  }
+
+  var SCN = [
+    {
+      id: "assistant", name: "Assistant → RAG → agent", short: "Chat, retrieval and tool use in one flow. Toggle the three levels.",
+      example: `“Pay my $500 credit card bill from checking and tell me my new balance.”`,
+      levels: true,
+      lanes: [["User", "person"], ["App", "UI / API"], ["Guardrails", "input + output"], ["Agent", "orchestrator", 1], ["Memory", "+ RAG store"], ["LLM", "the model", 1], ["Tools", "APIs / MCP"]],
+      phases: { 1: ["Input"], 5: ["Context"], 8: ["Agent loop", "repeats until done or max steps"], 21: ["Output"], 25: ["Learn"] },
+      steps: [
+        st(0, 1, `prompt`, "", `User sends a request`, `The user types the request. Voice, file uploads and API calls enter the same way.`, "", "", `POST /chat\n{"text": "Pay my $500 credit card bill..."}`),
+        st(1, 2, `request + session`, "", `App forwards the request`, `The app attaches session ID, user ID, conversation ID, plan tier and any files.`, `Lost context between turns`, "", `{"user": "u_81", "session": "s_42", "tier": "plus"}`),
+        st(2, 2, `screen input`, "safety", `Input screening`, `Auth and rate limits, PII redaction, prompt-injection detection and a moderation classifier all run before the model sees anything.`, `Abuse, data leaks, jailbreaks, cost spikes`, `Blocked: return a refusal and never call the model.`, `{"pii_redacted": ["acct_no"],\n "injection_score": 0.02, "allow": true}`),
+        st(2, 3, `clean message`, "", `Clean message to the agent`, `Only the sanitized message moves on. From here the orchestrator owns the flow.`, `Raw secrets reaching prompts or logs`),
+        st(3, 4, `fetch memory + docs`, "", `Fetch memory and documents`, `The agent looks up saved memory and retrieves documents.`, `Hallucination and stale knowledge`, "", "", 2),
+        st(4, 3, `relevant chunks`, "", `Relevant chunks return`, `Chunks and memory facts come back with source IDs, so the final answer can cite them.`, `Ungrounded answers`, "", "", 2),
+        st(3, 3, `build prompt`, "", `Build the prompt`, `System rules, memory, retrieved chunks, recent history and tool definitions are assembled and trimmed to fit the context window and token budget. Stable parts go first so prompt caching can reuse them.`, `Context overflow, runaway cost`, "", `[system] [tools] [memory] [docs]\n[history] [user message]  ≈ 6.2k tokens`),
+        st(3, 5, `prompt + tool list`, "llm", `Call the model`, `A router picks a fast model or a reasoning model, then sends the prompt plus the tools it may call, each with a JSON schema. In plain GenAI there is no tool list and the model answers directly.`, "", "", `model: reasoning (router: multi-step + money)\ntools: [get_balance, transfer, list_accounts]`),
+        st(5, 3, `tool_call: get_balance`, "llm", `Model asks for a tool`, `Instead of answering, the model emits a structured tool call. It cannot run anything itself.`, "", "", `{"tool": "get_balance",\n "args": {"account": "card_4521"}}`, 3),
+        st(3, 3, `policy check`, "safety", `Policy check`, `Is this tool allowed for this user? Is it a read or a write? Does it need approval? Reads pass; writes get flagged.`, `Over-permissioned agents`, `Denied: the error goes back to the model, which tries another path or explains.`, `{"tool": "get_balance", "type": "read",\n "allowed": true, "approval": false}`, 3),
+        st(3, 6, `execute (user-scoped creds)`, "", `Run the tool`, `The agent, not the model, calls the API (often through an MCP server) with the user's own scoped credentials and a timeout.`, `Privilege escalation`, "", `GET /cards/4521/balance\nAuthorization: <user-scoped token>`, 3),
+        st(6, 3, `result`, "", `Tool result`, `A structured result comes back to the agent.`, "", `Error or timeout: retry with backoff, then fall back to “I couldn't reach billing.”`, `{"balance": 1740.00, "due": 500.00}`, 3),
+        st(3, 5, `result appended`, "llm", `Result fed back`, `The result is appended to the conversation and the model reasons again with the new facts.`, "", `Loop runs too long: hit max steps or token budget, stop and hand off to a human.`, "", 3),
+        st(5, 3, `tool_call: transfer $500`, "llm", `Model proposes a write`, `The model decides to move money. This is irreversible, so it cannot go straight through.`, "", "", `{"tool": "transfer",\n "args": {"from": "chk_1180", "to": "card_4521",\n          "amount": 500}}`, 3),
+        st(3, 0, `approve $500 transfer?`, "safety", `Ask the human`, `Actions with money, legal or external impact pause the loop and show the user the exact action to confirm.`, `Irreversible mistakes; injected instructions acting on the user's behalf`, "", `Pay $500.00 from Checking ••1180\nto Card ••4521?   [Confirm] [Cancel]`, 3),
+        st(0, 3, `approved`, "safety", `User approves`, `Explicit confirmation is logged with the action details for audit.`, `Unauthorized actions`, `User declines: cancel, and the model confirms nothing changed.`, `{"approved": true, "by": "u_81",\n "at": "2026-11-15T14:02:11Z"}`, 3),
+        st(3, 6, `execute transfer`, "", `Execute the transfer`, `The agent runs the approved action with an idempotency key, so a retry can't pay twice.`, `Double execution`, "", `POST /transfers\nIdempotency-Key: 9f3c-…`, 3),
+        st(6, 3, `confirmation #8812`, "", `Confirmation returns`, `The bank system confirms the payment and returns the new balance.`, "", "", `{"status": "ok", "conf": "8812",\n "new_balance": 1240.00}`, 3),
+        st(3, 5, `result appended`, "llm", `Result fed back`, `The model gets the confirmation and decides it has everything it needs.`, "", "", "", 3),
+        st(5, 3, `final answer`, "llm", `Final answer`, `The model writes the reply. In plain GenAI, this is the model's only output.`, "", "", `Paid $500, confirmation #8812.\nNew card balance: $1,240.`),
+        st(3, 2, `draft`, "", `Draft to output checks`, `The draft goes through output guardrails before the user sees anything.`),
+        st(2, 2, `verify output`, "safety", `Verify the output`, `Grounding check (does $1,240 match the tool result?), PII scan, policy and disclaimer rules, format validation.`, `Confident wrong answers`, `Fails grounding: regenerate once, otherwise show a safe fallback.`, `{"grounded": true, "pii": false,\n "policy": "pass"}`),
+        st(2, 1, `stream tokens`, "", `Stream tokens`, `Tokens stream to the app, so text appears in about a second even when the full answer takes longer.`, `Perceived latency`),
+        st(1, 0, `answer`, "", `User sees the answer`, `The reply arrives with the confirmation number, sources and any disclaimer.`),
+        st(3, 4, `save memory`, "", `Save memory`, `A short summary or new fact is stored for the next session.`, `Users repeating themselves`, "", `memory.put("u_81", "paid card 11-15, prefers chk_1180")`, 2),
+        st(0, 1, `rating 👍 / 👎`, "", `Rating and feedback`, `Ratings and edits feed eval datasets and future tuning. Every step above also emitted a trace span: latency, tokens, cost.`, `Silent quality drift`, "", `{"trace": "t_77", "rating": "up",\n "latency_ms": 2140, "cost_usd": 0.006}`)
+      ],
+      fails: [[3, "Input screen blocks", "Return a refusal. The model is never called."], [10, "Policy check denies a tool", "The error goes back to the model, which tries another path or explains."], [12, "Tool errors or times out", "Retry with backoff, then fall back to a clear “couldn't reach billing.”"], [13, "Loop runs too long", "Max steps or token budget is hit. Stop and hand off to a human."], [16, "User declines the action", "Cancel. The model confirms that nothing changed."], [22, "Output fails grounding", "Regenerate once, otherwise show a safe fallback."]],
+      map: ["Your code (GenAI) → the model, inside guardrails (agent)", "Wrong action on a real account", "Policy check + human approval on writes", "ChatGPT, Claude, bank and telco assistants"]
+    },
+    {
+      id: "multi-agent", name: "Multi-agent team", short: "A lead agent splits work across specialist agents running in parallel.",
+      example: `Advisor: “Prepare the Q3 portfolio review for client 4410.”`,
+      lanes: [["User", "advisor"], ["Lead agent", "plans + merges", 1], ["Research", "sub-agent"], ["Portfolio", "sub-agent"], ["Compliance", "reviewer agent"], ["Data", "APIs / MCP"]],
+      phases: { 1: ["Plan"], 3: ["Fan out", "sub-agents run in parallel"], 9: ["Gather"], 12: ["Independent check"], 15: ["Deliver"] },
+      steps: [
+        st(0, 1, `review for 4410`, "", `Advisor asks for a review`, `One request that really contains several separate jobs.`, "", "", `{"task": "Q3 review", "client": "4410"}`),
+        st(1, 1, `plan + split tasks`, "llm", `Lead plans the work`, `The lead model breaks the job into independent subtasks, each with a clear goal, output format, tool list and budget.`, `Duplicate or overlapping work; vague handoffs`, "", `[{"to": "research", "goal": "Q3 market recap, 5 cited facts"},\n {"to": "portfolio", "goal": "return vs benchmark + chart"}]`),
+        st(1, 2, `task: market recap`, "", `Hand off to research`, `Sub-agents get only what they need: the goal and context, not the whole conversation. Across services this handoff can use the A2A protocol.`, `Context overload in the sub-agent`),
+        st(1, 3, `task: performance`, "", `Hand off to portfolio`, `Runs at the same time as research, so total time is the slowest task, not the sum.`),
+        st(2, 5, `news + web search`, "", `Research gathers sources`, `The research agent searches news and filings with its own tools.`),
+        st(3, 5, `holdings (read-only)`, "safety", `Portfolio reads data`, `Read-only access, scoped to this one client.`, `Agents with broader data access than the task needs`, "", `GET /clients/4410/holdings?as_of=2026-09-30\nscope: read, client=4410`),
+        st(5, 2, `sources`, "", `Sources return`, `Articles and filings come back to the research agent.`),
+        st(5, 3, `rows`, "", `Data returns`, `Holdings and returns come back to the portfolio agent.`),
+        st(2, 1, `summary + citations`, "", `Research reports back`, `Sub-agents return a short, structured result, not their full transcript, so the lead's context stays small.`, `Context bloat in the lead agent`, `A sub-agent stalls: timeout, lead continues with partial results and flags the gap.`, `{"facts": 5, "sources": 5, "tokens": 900}`),
+        st(3, 1, `metrics + chart`, "", `Portfolio reports back`, `Return vs benchmark, allocation drift and a chart.`, "", "", `{"return": "4.1%", "benchmark": "3.6%", "drift": "+2% equity"}`),
+        st(1, 1, `merge draft`, "llm", `Lead merges results`, `The lead combines both results into one draft and resolves conflicts.`, "", `Results conflict: the lead sends a targeted follow-up to one sub-agent.`),
+        st(1, 4, `review draft`, "safety", `Independent review`, `A separate agent with its own instructions checks claims, required disclosures and banned language like performance promises.`, `Self-review bias: the writer grading its own work`, "", `checks: [disclosures, no_guarantees, sources_cited]`),
+        st(4, 1, `2 fixes needed`, "safety", `Reviewer flags issues`, `Specific, fixable feedback goes back to the lead.`, "", `Fails twice: stop and escalate to a human compliance reviewer.`, `[{"line": 7, "issue": "missing past-performance disclosure"}]`),
+        st(1, 1, `revise`, "llm", `Lead revises`, `The lead applies the fixes and re-checks.`),
+        st(1, 0, `draft for approval`, "safety", `Human approves`, `The advisor reviews before anything reaches the client.`, `Unreviewed AI output reaching customers`)
+      ],
+      fails: [[9, "A sub-agent stalls", "Timeout. The lead continues with partial results and flags the gap."], [11, "Results conflict", "The lead sends a targeted follow-up to one sub-agent."], [13, "Review fails twice", "Stop the loop and escalate to a human reviewer."]],
+      map: ["A lead agent", "Cost multiplies; errors compound across handoffs", "Small structured handoffs + independent reviewer", "Research agents with sub-agents, LangGraph / CrewAI apps"]
+    },
+    {
+      id: "coding", name: "Coding agent", short: "Reads a repo, edits code, runs tests in a sandbox, opens a PR.",
+      example: `Developer: “Fix the failing checkout test and open a PR.”`,
+      lanes: [["Developer", "person"], ["Agent", "harness", 1], ["LLM", "the model", 1], ["Sandbox", "files + shell"], ["Git / CI", "repo host"]],
+      phases: { 1: ["Context"], 3: ["Agent loop", "repeats until tests pass"], 14: ["Ship"] },
+      steps: [
+        st(0, 1, `fix failing test`, "", `Developer gives a task`, `A task in plain language, from a terminal, IDE or issue.`),
+        st(1, 1, `load repo context`, "", `Load project context`, `The harness reads project instruction files, git status and the file tree.`, `Agent ignoring team conventions`, "", `AGENTS.md / CLAUDE.md, git status,\nsrc/ tree (2,140 files)`),
+        st(1, 2, `task + tools`, "llm", `Call the model`, `The model gets the task and tools: read file, search, edit, run command.`, "", "", `tools: [read, grep, edit, bash]`),
+        st(2, 1, `grep "checkout"`, "llm", `Model searches`, `The model asks to search the code before changing anything.`),
+        st(1, 3, `run search`, "", `Search runs`, `Runs inside the sandbox, not on production.`),
+        st(3, 1, `3 matches`, "", `Matches return`, `File paths and line numbers come back.`),
+        st(1, 2, `results`, "llm", `Results fed back`, `The model reads the matching files.`),
+        st(2, 1, `edit cart.py (diff)`, "llm", `Model proposes an edit`, `A precise diff, not a rewrite of the whole file.`, "", "", `- total = sum(items)\n+ total = sum(i.price * i.qty for i in items)`),
+        st(1, 1, `permission check`, "safety", `Permission check`, `Edits inside the repo are allowed. Deleting files, network calls, installing packages or pushing need approval.`, `Destructive commands, secret leaks`, `Risky command: pause and ask the developer.`, `{"action": "edit", "path": "src/cart.py",\n "allowed": true}`),
+        st(1, 3, `apply + run tests`, "", `Apply and test`, `The edit is applied and the test suite runs in the sandbox.`, "", "", `pytest tests/test_checkout.py`),
+        st(3, 1, `0 failed`, "", `Test output`, `Test output is the agent's ground truth. Failures go back to the model and the loop continues.`, `Code that looks right but doesn't work`, `Still failing after N tries: stop and report what was tried.`, `12 passed, 0 failed in 3.1s`),
+        st(1, 2, `tests pass`, "llm", `Success fed back`),
+        st(2, 1, `summary + PR text`, "llm", `Model writes the summary`, `What changed and why, for the human reviewer.`),
+        st(1, 4, `push branch, open PR`, "safety", `Open a PR`, `The agent opens a pull request. It doesn't merge.`, `Unreviewed code in main`),
+        st(4, 1, `CI green`, "", `CI runs`, `CI runs the full test suite, linters and security scans.`, "", `CI fails: the agent reads the logs and pushes a fix.`),
+        st(1, 0, `PR ready for review`, "safety", `Human reviews`, `A person reviews and merges.`, `Subtle bugs and design drift`)
+      ],
+      fails: [[9, "Risky command", "Pause and ask the developer before running it."], [11, "Tests keep failing", "Stop after N attempts and report what was tried."], [15, "CI fails", "The agent reads the logs and pushes a fix."]],
+      map: ["The model, inside a sandbox", "Plausible but wrong code; destructive commands", "Tests as ground truth, permission prompts, PR review", "Claude Code, Cursor, GitHub Copilot coding agent, Codex"]
+    },
+    {
+      id: "computer-use", name: "Computer-use agent", short: "Sees the screen, clicks and types like a person, asks before buying.",
+      example: `“Book the cheapest refundable flight to Austin on Friday.”`,
+      lanes: [["User", "person"], ["Agent", "harness", 1], ["Vision LLM", "sees screens", 1], ["Browser / VM", "isolated"], ["Website", "third party"]],
+      phases: { 1: ["Start"], 2: ["See, think, act", "repeats for every screen"], 13: ["Confirm and finish"] },
+      steps: [
+        st(0, 1, `book flight`, "", `User gives a goal`, `A goal, not step-by-step instructions.`),
+        st(1, 3, `open airline site`, "", `Open the browser`, `A fresh, isolated browser or virtual machine with no access to the user's other accounts.`, `Agent touching unrelated accounts or files`),
+        st(3, 1, `screenshot`, "", `Screenshot`, `The agent's only view of the world is pixels, sometimes plus the page's accessibility tree.`),
+        st(1, 2, `goal + screenshot`, "llm", `Model looks`, `The model gets the goal, the history of actions and the current screen.`),
+        st(2, 1, `click (412, 230)`, "llm", `Model picks an action`, `Click, type, scroll or key press, with coordinates.`, "", "", `{"action": "left_click", "x": 412, "y": 230}`),
+        st(1, 1, `action check`, "safety", `Action check`, `Is the domain allowed? Does the page contain text trying to give the agent new instructions?`, `Prompt injection from web pages`, `Injected instructions found: ignore them and flag to the user.`, `{"domain": "allowed", "injection": false}`),
+        st(1, 3, `click + type`, "", `Act`, `The click and typing happen in the isolated browser.`),
+        st(3, 4, `HTTP request`, "", `Site request`, `The website sees an ordinary browser session.`),
+        st(4, 3, `results page`, "", `New page loads`),
+        st(3, 1, `new screenshot`, "", `New screenshot`, `The loop repeats for every screen: look, decide, act.`, "", `Layout changed or element missing: take a new screenshot and retry.`),
+        st(1, 2, `screenshot`, "llm", `Model looks again`),
+        st(2, 1, `click "Purchase $248"`, "llm", `Model reaches checkout`),
+        st(1, 0, `confirm $248?`, "safety", `Ask before buying`, `Purchases, sends and account changes need the user's confirmation. Logins and payment details can be handed to the user directly.`, `Unwanted purchases`, "", `Delta 1182 · Fri 7:10 AM · refundable · $248\n[Confirm] [Take over]`),
+        st(0, 1, `confirm`, "safety", `User confirms`, "", "", `CAPTCHA or login: hand control to the user, then resume.`),
+        st(1, 3, `click purchase`, "", `Complete the purchase`),
+        st(1, 0, `booked, conf ABC123`, "", `Report back`, `Confirmation number and a summary of what was done.`)
+      ],
+      fails: [[6, "Page tries to instruct the agent", "Ignore the injected text and flag it to the user."], [10, "Layout changed", "Take a new screenshot and retry the step."], [14, "CAPTCHA or login wall", "Hand control to the user, then resume."]],
+      map: ["The model, one screen at a time", "Prompt injection from web pages; wrong clicks", "Isolated browser, domain allowlist, confirm before buying", "ChatGPT agent, Claude computer use, browser agents"]
+    },
+    {
+      id: "research", name: "Deep research", short: "Plans sub-questions, runs many searches in parallel, writes a cited report.",
+      example: `“How are US banks using AI agents in customer service? Cite sources.”`,
+      lanes: [["User", "person"], ["Lead agent", "plans + writes", 1], ["Search workers", "parallel", 1], ["Web + docs", "sources"], ["Citation check", "verifier"]],
+      phases: { 1: ["Scope"], 4: ["Plan"], 5: ["Search and read", "repeats until gaps close or budget runs out"], 11: ["Verify"], 14: ["Deliver"] },
+      steps: [
+        st(0, 1, `question`, "", `User asks`, `A broad question that needs many sources.`),
+        st(1, 0, `US only? last 12 mo?`, "", `Clarify scope`, `Good research agents confirm scope before spending minutes and dollars.`, `Long, expensive answers to the wrong question`),
+        st(0, 1, `yes, last 12 months`, "", `User confirms`),
+        st(1, 1, `plan 6 sub-questions`, "llm", `Make a research plan`, `Breaks the question into sub-questions and sets a search budget.`, "", "", `1. Which banks announced agents?\n2. Which tasks do they handle?\n3. Reported containment / CSAT? ...`),
+        st(1, 2, `sub-questions`, "", `Fan out`, `Each worker takes a sub-question in parallel.`),
+        st(2, 3, `~40 searches`, "", `Search`, `Web search, filings, internal docs.`, "", `Low-quality sources: ranking rules prefer primary sources.`),
+        st(3, 2, `pages + PDFs`, "", `Read sources`),
+        st(2, 2, `extract facts`, "llm", `Extract facts`, `Workers pull facts with exact quotes and URLs.`, "", "", `{"fact": "...", "quote": "...", "url": "...", "date": "2026-06"}`),
+        st(2, 1, `findings + sources`, "", `Report findings`),
+        st(1, 1, `find gaps`, "llm", `Find gaps`, `The lead checks what is still unanswered and sends more searches if needed.`, "", `Budget exhausted: stop and list open questions in the report.`),
+        st(1, 4, `draft report`, "", `Draft to verifier`),
+        st(4, 4, `match claims to sources`, "safety", `Check every claim`, `Each sentence with a fact must trace to a quote in a source.`, `Hallucinated citations`, "", `{"claims": 41, "supported": 38, "unsupported": 3}`),
+        st(4, 1, `3 unsupported`, "safety", `Flag unsupported claims`, `Unsupported claims are removed or marked as unverified.`),
+        st(1, 0, `cited report`, "", `Deliver the report`, `Report with inline citations and a list of open questions.`)
+      ],
+      fails: [[6, "Low-quality sources", "Ranking rules prefer primary sources."], [10, "Budget runs out", "Stop and list open questions in the report."], [13, "Unsupported claims", "Remove them or mark them unverified."]],
+      map: ["A lead agent with parallel workers", "Confident claims with fake or weak citations", "Claim-to-source verification, search budget", "Deep research in ChatGPT, Gemini, Claude, Perplexity"]
+    },
+    {
+      id: "voice", name: "Real-time voice agent", short: "Listens, talks back in under a second, takes actions, hands off to a human.",
+      example: `Caller: “I lost my card. Can you freeze it?”`,
+      lanes: [["Caller", "phone"], ["Voice gateway", "telephony"], ["Speech-to-text", "streaming"], ["Agent + LLM", "decides", 1], ["Text-to-speech", "streaming"], ["Card system", "core banking"]],
+      phases: { 1: ["Listen"], 4: ["Respond while acting", "target: first audio under ~800 ms"], 12: ["Speak and hand off"] },
+      steps: [
+        st(0, 1, `audio stream`, "", `Caller speaks`, `Audio streams in continuously.`),
+        st(1, 2, `audio chunks`, "", `Stream to STT`, `Speech-to-speech models can merge the STT, LLM and TTS lanes into one, trading control for speed.`),
+        st(2, 3, `partial transcript`, "llm", `Streaming transcript`, `Turn detection decides when the caller has finished speaking.`, "", `Mis-heard numbers: read them back and confirm.`, `"I lost my card can you freeze it"`),
+        st(3, 4, `“Sure, one moment”`, "llm", `Speak while working`, `A short filler reply keeps latency low while the agent acts.`, `Dead air that makes callers hang up`),
+        st(4, 1, `audio`, "", `Filler audio plays`),
+        st(3, 5, `verify identity`, "safety", `Verify identity`, `Knowledge check, voice match or a one-time code before any account action.`, `Account takeover by voice`, `Verification fails: transfer to a human.`),
+        st(5, 3, `verified`, "safety", `Identity confirmed`),
+        st(3, 5, `freeze card 4521`, "", `Take the action`, `Freezing is reversible, so it can run without extra confirmation.`),
+        st(5, 3, `frozen`, "", `Action confirmed`),
+        st(3, 4, `confirmation text`, "llm", `Write the reply`, `Short, spoken-style sentences.`),
+        st(4, 1, `speech`, "", `Synthesize speech`),
+        st(1, 0, `“Your card is frozen”`, "", `Caller hears the answer`),
+        st(0, 1, `barge-in: “wait…”`, "", `Caller interrupts`, `Playback stops immediately and the new speech is handled.`, `Talking over the caller`),
+        st(3, 1, `handoff + summary`, "safety", `Hand off to a human`, `Complex, emotional or failed-verification calls go to a person with a summary, so the caller doesn't repeat themselves.`, `Stuck loops and frustrated callers`, "", `{"intent": "lost card", "done": ["freeze"],\n "next": "replacement card"}`)
+      ],
+      fails: [[3, "Mis-heard numbers", "Read them back and ask the caller to confirm."], [6, "Verification fails", "Transfer to a human agent."], [13, "Caller interrupts", "Stop speaking at once and handle the new input."]],
+      map: ["The agent, under tight latency", "Latency; mis-heard numbers; voice spoofing", "Streaming, identity checks, human handoff", "Call-center agents, real-time voice assistants"]
+    },
+    {
+      id: "image", name: "Image generation", short: "Prompt to finished, checked, labeled images for a campaign.",
+      example: `Marketer: “Create a banner for our 529 college-savings campaign.”`,
+      lanes: [["User", "marketer"], ["App", "design tool"], ["Safety", "in + out"], ["Prompt writer", "LLM", 1], ["Image model", "diffusion", 1], ["Provenance", "label + brand"]],
+      phases: { 1: ["Input"], 4: ["Generate"], 7: ["Check and label"], 12: ["Review"] },
+      steps: [
+        st(0, 1, `prompt + brand kit`, "", `User describes the image`, `A short prompt plus brand colors, fonts and reference images.`),
+        st(1, 2, `screen prompt`, "safety", `Screen the prompt`, `Blocks real people's likenesses, trademarks and unsafe content.`, `Deepfakes, IP violations`, `Blocked: explain why and suggest an alternative.`),
+        st(2, 3, `allowed prompt`, ""),
+        st(3, 3, `expand prompt`, "llm", `Rewrite the prompt`, `An LLM expands the short prompt with composition, style and brand details.`, "", "", `"Warm photo of a parent and child at a kitchen table\nwith a notebook, navy and gold palette, space\nfor headline at left, 1200x628"`),
+        st(3, 4, `detailed prompt`, "llm", `Send to the image model`),
+        st(4, 4, `diffusion (30 steps)`, "llm", `Generate`, `The model turns noise into an image step by step, conditioned on the prompt.`),
+        st(4, 2, `4 candidates`, "", `Candidates return`),
+        st(2, 2, `image check`, "safety", `Check the images`, `Classifiers check for unsafe content, logos, and garbled text.`, `Brand and safety incidents`, `All fail: regenerate with an adjusted prompt.`),
+        st(2, 5, `3 passed`, ""),
+        st(5, 5, `watermark + C2PA`, "safety", `Label as AI-generated`, `An invisible watermark and C2PA content credentials record that the image is AI-made.`, `Undisclosed synthetic media`, "", `c2pa: {"generator": "image-model", "date": "2026-11-15"}`),
+        st(5, 1, `images + credentials`, ""),
+        st(1, 0, `pick / edit / redo`, "", `User picks`, `Edit regions, regenerate, or adjust.`),
+        st(0, 1, `send to legal review`, "safety", `Human approval`, `Regulated marketing still goes through legal and compliance review.`, `Non-compliant financial ads`)
+      ],
+      fails: [[2, "Prompt blocked", "Explain why and suggest an alternative."], [8, "All candidates fail checks", "Regenerate with an adjusted prompt."], [12, "Text in the image is garbled", "Regenerate, or add the text in the design tool."]],
+      map: ["Your code (fixed pipeline)", "Likeness, IP and unsafe content", "Prompt + image classifiers, C2PA labels", "Image models in design tools (Firefly, Imagen, DALL·E family)"]
+    },
+    {
+      id: "background", name: "Background agent", short: "No prompt: an event triggers the agent, a human sees a daily digest.",
+      example: `A vendor emails an invoice at 2 AM. Nobody is awake.`,
+      lanes: [["Event source", "email / webhook"], ["Queue", "scheduler"], ["Agent", "orchestrator", 1], ["LLM", "the model", 1], ["ERP", "system of record"], ["AP clerk", "person"]],
+      phases: { 1: ["Trigger", "no user prompt"], 3: ["Decide"], 8: ["Act and report"] },
+      steps: [
+        st(0, 1, `new email (webhook)`, "", `Event arrives`, `Triggered by an event or a schedule, not a person typing.`),
+        st(1, 2, `job (retry-safe)`, "", `Queue the job`, `A queue gives retries and ordering, and survives crashes.`, `Lost or duplicated work`, `Duplicate event: the idempotency key makes it a no-op.`, `{"job": "email_8812", "idempotency_key": "msg-7f2a"}`),
+        st(2, 3, `classify email`, "llm", `Classify`),
+        st(3, 2, `invoice · Acme`, "llm", `Extract fields`, "", "", "", `{"type": "invoice", "vendor": "Acme",\n "amount": 4200, "po": "7781", "confidence": 0.97}`),
+        st(2, 4, `match PO #7781`, "", `Check the system of record`),
+        st(4, 2, `PO found, $4,200`, ""),
+        st(2, 2, `rule check`, "safety", `Rule check`, `Hard rules, not the model, decide what can be automatic: amount matches, vendor known, under $5k.`, `Fraudulent or wrong payments`, `Low confidence or rule fails: send to the human queue.`, `{"amount_match": true, "vendor_known": true,\n "under_limit": true}`),
+        st(2, 4, `create payable (draft)`, "", `Act within limits`, `Creates a draft payable. Payment release stays human.`),
+        st(2, 5, `digest: 14 done, 2 for you`, "", `Daily digest`, `Humans manage exceptions, not every item.`),
+        st(5, 2, `approve 2, reject 1`, "safety", `Human decides exceptions`),
+        st(2, 2, `audit log`, "", `Log everything`, `Every decision is logged with inputs and the rule that allowed it.`, `Untraceable automation`)
+      ],
+      fails: [[2, "Duplicate event", "The idempotency key makes it a no-op."], [7, "Low confidence or rule fails", "Send it to the human queue."], [2, "Agent crashes", "The queue retries with backoff; after 5 tries it goes to a dead-letter queue."]],
+      map: ["Events + hard rules", "Silent errors at scale with nobody watching", "Rule limits, idempotency, audit log, digest", "Invoice processing, inbox triage, alert triage"]
+    },
+    {
+      id: "document", name: "Document AI", short: "Extracts fields from thousands of forms, routes low-confidence ones to people.",
+      example: `“Extract fields from 10,000 account-opening forms.”`,
+      lanes: [["Uploader", "ops team"], ["Pipeline", "batch jobs"], ["Vision LLM", "reads pages", 1], ["Validator", "rules"], ["Reviewer", "person"], ["System of record", "core system"]],
+      phases: { 1: ["Ingest"], 3: ["Extract"], 5: ["Validate and route"], 9: ["Improve"] },
+      steps: [
+        st(0, 1, `10,000 PDFs`, "", `Upload a batch`),
+        st(1, 1, `split + classify pages`, "", `Prepare pages`, `Split files, detect page types (ID, form, statement), redact what isn't needed.`, `Storing more PII than necessary`),
+        st(1, 2, `page + JSON schema`, "llm", `Extract with a schema`, `The model must return JSON matching a fixed schema.`, "", `Invalid JSON: retry with the validation error message.`, `{"name": "string", "dob": "date",\n "ssn_last4": "string", "address": "string"}`),
+        st(2, 3, `fields + confidence`, "llm", `Fields return`, "", "", "", `{"name": "Ana Ruiz", "dob": "1988-03-02",\n "confidence": {"dob": 0.71}}`),
+        st(3, 3, `schema + cross-checks`, "safety", `Validate`, `Format checks, date sanity, and cross-field rules like name on form matching name on ID.`, `Wrong data entering core systems`),
+        st(3, 5, `92% → auto-post`, "", `Auto-post confident records`),
+        st(3, 4, `8% low confidence`, "safety", `Route to people`, `Only uncertain fields are shown, highlighted on the page image.`, `Reviewer fatigue`),
+        st(4, 5, `corrected fields`, "", `Human corrects`),
+        st(4, 1, `corrections → eval set`, "", `Learn from corrections`, `Corrections become the eval set and few-shot examples. Weekly evals catch accuracy drift.`, `Silent accuracy drift`, "", `{"eval_set": 1240, "field_accuracy": 0.986}`)
+      ],
+      fails: [[3, "Invalid JSON", "Retry with the validation error message."], [7, "Low confidence", "Route only the uncertain fields to a person."], [9, "Accuracy drifts", "Weekly eval on corrected samples triggers a review."]],
+      map: ["Your code (fixed pipeline)", "Wrong data in core systems at scale", "Schema validation, confidence routing, eval set", "KYC, claims, invoices, loan files"]
+    }
+  ];
+
+  var RAG = {
+    vector: { name: "Vector RAG", tag: "Baseline", how: "Split documents into chunks, embed each chunk, and store the vectors. At query time, embed the question and return the nearest chunks by similarity.", idx: ["Chunk docs", "Embed chunks", "Vector DB"], q: ["Embed question", "Top-k nearest", "Chunks → prompt"], best: "FAQ and policy lookup where questions use wording similar to the docs.", weak: "Misses exact terms like form numbers or account codes. Can't reason across documents.", fit: "Works, but can miss exact phrases like “cutoff 8 PM ET”.", s5: ["vector search (k=4)", 'embed("bill pay cutoff time")\nvector.search(q_emb, k=4)'], s6: ["top-4 chunks", '[{"doc": "billpay_policy#3", "cos": 0.82},\n {"memory": "pays card from chk_1180"}]'] },
+    hybrid: { name: "Hybrid + rerank", tag: "Used here", how: "Run keyword (BM25) and vector search in parallel, merge the two result lists, then a reranker model re-scores the top ~50 and keeps the best few.", idx: ["Chunk docs", "Embed + keyword index", "Vector + BM25 store"], q: ["BM25 + vector", "Merge (RRF)", "Rerank → top 4", "Chunks → prompt"], best: "Enterprise docs full of exact terms: product names, policy IDs, legal phrases. The default for most production systems.", weak: "More moving parts. The reranker adds roughly 100–300 ms.", fit: "Best fit. Bill-pay rules mix exact terms (cutoff times, account types) with natural phrasing.", s5: ["hybrid search + rerank", 'bm25.search("bill pay cutoff", k=25)\nvector.search(q_emb, k=25)\nmerge (RRF) → rerank → top 4'], s6: ["top-4 reranked chunks", '[{"doc": "billpay_policy#3", "rerank": 0.94},\n {"memory": "pays card from chk_1180"}]'] },
+    graph: { name: "GraphRAG", tag: "Relationships", how: "An LLM extracts entities and relationships from documents into a knowledge graph, often with community summaries. Queries find the relevant entities, then follow their connections.", idx: ["Extract entities", "Build graph", "Summarize communities"], q: ["Find entities", "Traverse 1–2 hops", "Subgraph + text → prompt"], best: "Questions about connections across many documents: “Which suppliers are exposed to this sanction?” or “Who owns what, through which entities?”", weak: "Expensive and slow to build, hard to keep fresh, overkill for single-document lookups.", fit: "Overkill here. Useful if the question were “Which of my linked accounts and joint owners does this policy change affect?”", s5: ["graph query (2 hops)", 'MATCH (u:User {id: "u_81"})-[:OWNS]->(a)\n      -[:GOVERNED_BY]->(p:Policy)\nRETURN a, p'], s6: ["subgraph + chunks", '{"nodes": ["chk_1180", "card_4521", "BillPay Policy"],\n "edges": ["OWNS", "PAYS_FROM", "GOVERNED_BY"]}'] },
+    agentic: { name: "Agentic RAG", tag: "Model-driven", how: "Retrieval becomes a tool. The model decides whether to search and what to search for, judges whether the results are good enough, and searches again if not.", idx: ["Any index above"], q: ["Model plans", "search_docs() tool", "Judge results", "Re-query or answer"], best: "Vague or multi-part questions where the right search isn't obvious up front. Research assistants.", weak: "More model calls, so higher cost and latency. Needs loop limits.", fit: "Partly. In Agentic mode, retrieval could move into the loop (steps 9–12) as a search_docs tool.", s5: ["search_docs (tool call)", '{"tool": "search_docs",\n "args": {"query": "card bill pay cutoff time"}}'], s6: ["results → model judges", '{"results": 3, "sufficient": true}'] },
+    structured: { name: "Structured / SQL RAG", tag: "Numbers & records", how: "The model turns the question into a database query (text-to-SQL or an API call) and retrieves rows instead of text.", idx: ["Schema + column descriptions"], q: ["Question → SQL", "Run read-only query", "Rows → prompt"], best: "Balances, transactions, metrics: “What did I spend on travel in Q3?”", weak: "A wrong join gives a confident wrong number. Needs read-only, user-scoped access.", fit: "Used for the balance, but as a fixed tool call (steps 11–12), which is safer than free-form SQL.", s5: ["text-to-SQL (read-only)", "SELECT balance, due FROM cards\nWHERE id = :card AND owner = :user"], s6: ["rows", '[{"balance": 1740.00, "due": 500.00}]'] }
+  };
+  var RAG_ORDER = ["vector", "hybrid", "graph", "agentic", "structured"];
+
+  var MODE_NOTES = {
+    1: "Plain GenAI: one model call, and your code controls the flow. Faded steps don't exist at this level.",
+    2: "RAG: adds memory and retrieval before the call, and saves memory after.",
+    3: "Agentic: the model picks the next action inside a loop. Policy check and human approval keep it safe."
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  var X = function (i) { return 70 + i * 130; };
+
+  var sc = SCN[0], mode = 3, cur = 1, timer = null, groups = [];
+
+  function phaseOf(n) {
+    var name = "", keys = Object.keys(sc.phases).map(Number).sort(function (a, b) { return a - b; });
+    keys.forEach(function (k) { if (n >= k) name = sc.phases[k][0]; });
+    return name;
+  }
+
+  function render() {
+    var lanes = sc.lanes, last = lanes.length - 1, W = 140 + last * 130, y = 82, body = "";
+    sc.steps.forEach(function (s, idx) {
+      var n = idx + 1, ph = sc.phases[n];
+      if (ph) {
+        body += '<g><rect class="ph-bg" x="8" y="' + y + '" width="' + (W - 16) + '" height="22" rx="4"></rect>' +
+          '<text class="ph-t" x="18" y="' + (y + 15) + '">' + esc(ph[0].toUpperCase()) + '</text>' +
+          (ph[1] ? '<text class="ph-n" x="' + (W - 18) + '" y="' + (y + 15) + '" text-anchor="end">' + esc(ph[1]) + '</text>' : '') + '</g>';
+        y += 30;
+      }
+      var self = s.f === s.t, h = self ? 40 : 36, cy = y + (self ? 15 : 22), g = "";
+      g += '<rect class="hit" x="8" y="' + y + '" width="' + (W - 16) + '" height="' + h + '" rx="6"></rect>';
+      var lbl = '<tspan class="num">' + n + '</tspan>  ' + esc(s.l);
+      if (!self) {
+        var x1 = X(s.f), x2 = X(s.t), d = x2 > x1 ? 1 : -1;
+        g += '<line class="ln" x1="' + x1 + '" y1="' + cy + '" x2="' + (x2 - d * 8) + '" y2="' + cy + '"></line>';
+        g += '<polygon class="hd" points="' + x2 + ',' + cy + ' ' + (x2 - d * 10) + ',' + (cy - 4.5) + ' ' + (x2 - d * 10) + ',' + (cy + 4.5) + '"></polygon>';
+        g += '<text class="lbl" id="lbl-' + n + '" x="' + ((x1 + x2) / 2) + '" y="' + (cy - 8) + '" text-anchor="middle">' + lbl + '</text>';
+      } else {
+        var x = X(s.f), dd = s.f === last ? -1 : 1;
+        g += '<path class="ln" d="M' + x + ' ' + (cy - 7) + ' H' + (x + dd * 28) + ' V' + (cy + 9) + ' H' + (x + dd * 9) + '"></path>';
+        g += '<polygon class="hd" points="' + x + ',' + (cy + 9) + ' ' + (x + dd * 10) + ',' + (cy + 4.5) + ' ' + (x + dd * 10) + ',' + (cy + 13.5) + '"></polygon>';
+        g += '<text class="lbl" id="lbl-' + n + '" x="' + (x + dd * 36) + '" y="' + (cy + 5) + '"' + (dd < 0 ? ' text-anchor="end"' : '') + '>' + lbl + '</text>';
+      }
+      body += '<g class="step k-' + (s.k || "none") + '" data-n="' + n + '" tabindex="0" role="button" aria-label="Step ' + n + ': ' + esc(s.title || s.l) + '">' + g + '</g>';
+      y += h;
+    });
+    var end = y + 10, head = "";
+    lanes.forEach(function (L, i) {
+      var x = X(i);
+      head += '<line class="lifeline" x1="' + x + '" y1="60" x2="' + x + '" y2="' + end + '"></line>';
+      head += '<rect class="lane-box' + (L[2] ? ' core' : '') + '" x="' + (x - 58) + '" y="12" width="116" height="48" rx="8"></rect>';
+      head += '<text class="lane-name" x="' + x + '" y="33" text-anchor="middle">' + esc(L[0]) + '</text>';
+      head += '<text class="lane-sub" x="' + x + '" y="50" text-anchor="middle">' + esc(L[1]) + '</text>';
+    });
+    $("diagram").innerHTML = '<svg viewBox="0 0 ' + W + ' ' + (end + 12) + '" width="' + W + '" height="' + (end + 12) + '" role="img" aria-label="Sequence diagram: ' + esc(sc.name) + '">' + head + body + '</svg>';
+    groups = Array.prototype.slice.call(document.querySelectorAll(".step"));
+    groups.forEach(function (g) {
+      g.addEventListener("click", function () { stop(); select(+g.dataset.n); });
+      g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); stop(); select(+g.dataset.n); } });
+    });
+  }
+
+  function visible() {
+    var m = sc.levels ? mode : 3, out = [];
+    sc.steps.forEach(function (s, i) { if (s.lv <= m) out.push(i + 1); });
+    return out;
+  }
+
+  function select(n, focus) {
+    cur = n;
+    var s = sc.steps[n - 1];
+    groups.forEach(function (g) { g.classList.toggle("active", +g.dataset.n === n); });
+    $("pNum").textContent = "Step " + n + " of " + sc.steps.length;
+    var pill = $("pPhase");
+    pill.textContent = s.k === "safety" ? "Safety control" : s.k === "llm" ? "Model step" : phaseOf(n);
+    pill.className = "pill" + (s.k ? " " + s.k : "");
+    $("pTitle").textContent = s.title || s.l;
+    var L = sc.lanes;
+    $("pRoute").textContent = (s.f === s.t ? L[s.f][0] + " (internal step)" : L[s.f][0] + " → " + L[s.t][0]) + " · " + phaseOf(n);
+    $("pWhat").textContent = s.what || s.l;
+    $("pProt").textContent = s.prot; $("pProtWrap").hidden = !s.prot;
+    $("pFail").textContent = s.fail; $("pFailWrap").hidden = !s.fail;
+    $("pPay").textContent = s.pay; $("pPayWrap").hidden = !s.pay;
+    if (focus && groups[n - 1]) groups[n - 1].focus({ preventScroll: true });
+  }
+  function step(dir) {
+    var v = visible(), i = v.indexOf(cur);
+    i = i < 0 ? 0 : Math.min(v.length - 1, Math.max(0, i + dir));
+    select(v[i]);
+  }
+  function stop() { clearInterval(timer); timer = null; $("play").textContent = "Play flow"; }
+  function play() {
+    if (timer) return stop();
+    var v = visible();
+    if (cur === v[v.length - 1]) select(v[0]);
+    $("play").textContent = "Pause";
+    timer = setInterval(function () {
+      var vv = visible();
+      if (cur === vv[vv.length - 1]) return stop();
+      step(1);
+    }, 1500);
+  }
+  function setMode(m) {
+    mode = m;
+    [1, 2, 3].forEach(function (k) { $("m" + k).setAttribute("aria-pressed", String(k === m)); });
+    var eff = sc.levels ? m : 3;
+    groups.forEach(function (g) {
+      var off = sc.steps[+g.dataset.n - 1].lv > eff;
+      g.classList.toggle("off", off);
+      g.setAttribute("tabindex", off ? "-1" : "0");
+    });
+    $("modeNote").textContent = MODE_NOTES[m];
+    if (visible().indexOf(cur) < 0) select(1);
+  }
+
+  function renderFails() {
+    $("failHead").textContent = "Failure paths · " + sc.name;
+    $("fails").innerHTML = sc.fails.map(function (f) {
+      return '<div class="fail-card"><div class="when">' + esc(f[1]) + '</div><p class="then">' + esc(f[2]) +
+        '</p><button class="jump" data-n="' + f[0] + '">Go to step ' + f[0] + ' ↑</button></div>';
+    }).join("");
+    Array.prototype.forEach.call($("fails").querySelectorAll(".jump"), function (b) {
+      b.addEventListener("click", function () { stop(); setMode(3); select(+b.dataset.n); scrollToDiagram(); });
+    });
+  }
+  function scrollToDiagram() {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    $("example").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }
+
+  function setScenario(id, keepHash) {
+    var found = SCN.filter(function (s) { return s.id === id; })[0] || SCN[0];
+    sc = found; stop();
+    Array.prototype.forEach.call($("gallery").children, function (b) { b.setAttribute("aria-pressed", String(b.dataset.id === sc.id)); });
+    $("example").innerHTML = '<span>' + esc(sc.name) + ' · example:</span> ' + esc(sc.example);
+    $("levelCtl").hidden = !sc.levels;
+    render();
+    setMode(sc.levels ? mode : 3);
+    renderFails();
+    select(1);
+    if (!keepHash) { try { history.replaceState(null, "", "#" + sc.id); } catch (e) { /* hash routing optional */ } }
+  }
+
+  // gallery
+  $("gallery").innerHTML = SCN.map(function (s) {
+    return '<button data-id="' + s.id + '" aria-pressed="false"><b>' + esc(s.name) + '</b><span>' + esc(s.short) + '</span></button>';
+  }).join("");
+  Array.prototype.forEach.call($("gallery").children, function (b) {
+    b.addEventListener("click", function () { setScenario(b.dataset.id); });
+  });
+
+  // pattern map
+  $("mapBody").innerHTML = SCN.map(function (s) {
+    return '<tr><td>' + esc(s.name) + '<br><button class="jump" data-id="' + s.id + '">Open diagram ↑</button></td><td>' + esc(s.map[0]) + '</td><td>' + esc(s.map[1]) + '</td><td>' + esc(s.map[2]) + '</td><td>' + esc(s.map[3]) + '</td></tr>';
+  }).join("");
+  Array.prototype.forEach.call($("mapBody").querySelectorAll(".jump"), function (b) {
+    b.addEventListener("click", function () { setScenario(b.dataset.id); scrollToDiagram(); });
+  });
+
+  // RAG explorer (edits steps 5–6 of the assistant pattern)
+  $("ragSeg").innerHTML = RAG_ORDER.map(function (k) { return '<button id="rag-' + k + '" aria-pressed="false">' + esc(RAG[k].name) + '</button>'; }).join("");
+  function chips(label, arr) {
+    return '<div class="pipe"><span class="pipe-label">' + label + '</span>' + arr.map(function (c, i) {
+      return (i ? '<span class="ar">→</span>' : '') + '<span class="chip">' + esc(c) + '</span>';
+    }).join("") + '</div>';
+  }
+  function setRag(k) {
+    var r = RAG[k], a = SCN[0].steps;
+    RAG_ORDER.forEach(function (q) { $("rag-" + q).setAttribute("aria-pressed", String(q === k)); });
+    a[4].l = r.s5[0]; a[4].pay = r.s5[1];
+    a[4].what = "The agent looks up saved memory and retrieves documents with " + r.name + ". " + r.how;
+    a[5].l = r.s6[0]; a[5].pay = r.s6[1];
+    if (sc.id === "assistant") {
+      $("lbl-5").innerHTML = '<tspan class="num">5</tspan>  ' + esc(r.s5[0]);
+      $("lbl-6").innerHTML = '<tspan class="num">6</tspan>  ' + esc(r.s6[0]);
+      if (cur === 5 || cur === 6) select(cur);
+    }
+    $("ragCard").innerHTML =
+      '<div class="rag-head"><b>' + esc(r.name) + '</b>' +
+      (k === "hybrid" ? '<span class="pill used">Used in this example</span>' : '<span class="pill">' + esc(r.tag) + '</span>') + '</div>' +
+      '<p class="rag-how">' + esc(r.how) + '</p>' + chips("Index time", r.idx) + chips("Query time", r.q) +
+      '<div class="rag-grid"><div class="kv"><b>Best for</b><p>' + esc(r.best) + '</p></div>' +
+      '<div class="kv"><b>Weak at</b><p>' + esc(r.weak) + '</p></div>' +
+      '<div class="kv"><b>Fit for this example</b><p>' + esc(r.fit) + '</p></div></div>' +
+      '<button class="jump" id="ragShow">See steps 5–6 in the diagram ↑</button>';
+    $("ragShow").addEventListener("click", function () {
+      if (sc.id !== "assistant") setScenario("assistant");
+      stop(); if (mode < 2) setMode(2); select(5); scrollToDiagram();
+    });
+  }
+  RAG_ORDER.forEach(function (k) { $("rag-" + k).addEventListener("click", function () { setRag(k); }); });
+
+  $("stamp").textContent = "9 patterns · last reviewed " + REVIEWED;
+  $("log").innerHTML = LOG.map(function (l) { return '<li><time>' + esc(l[0]) + '</time>' + esc(l[1]) + '</li>'; }).join("");
+
+  document.addEventListener("keydown", function (e) {
+    if (e.target.closest && e.target.closest("button")) return;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); stop(); step(1); }
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); stop(); step(-1); }
+  });
+  $("prev").addEventListener("click", function () { stop(); step(-1); });
+  $("next").addEventListener("click", function () { stop(); step(1); });
+  $("play").addEventListener("click", play);
+  [1, 2, 3].forEach(function (k) { $("m" + k).addEventListener("click", function () { stop(); setMode(k); }); });
+  window.addEventListener("hashchange", function () { setScenario(location.hash.slice(1), true); });
+
+  setScenario(location.hash.slice(1) || "assistant", true);
+  setRag("hybrid");
+})();
+</script>
+
+</body>
+</html>
