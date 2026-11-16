@@ -1,0 +1,32 @@
+name: Template improvement
+description: Suggest a missing question, a fix, or a new template
+title: "Template: "
+labels: ["template"]
+body:
+  - type: dropdown
+    id: template
+    attributes:
+      label: Which template?
+      options:
+        - AI strategy memo
+        - Vision, North Star and metric tree
+        - Discovery kit
+        - Roadmap prioritization
+        - AI unit economics and pricing
+        - Agent PRD
+        - Eval plan
+        - Metrics glossary
+        - AI experimentation guide
+        - Responsible AI review
+        - Launch readiness checklist
+        - Post-launch runbook
+        - Worked example
+        - New template
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What should change, and why
+    validations:
+      required: true

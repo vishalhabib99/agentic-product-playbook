@@ -51,3 +51,7 @@ A single blocking gate failure means no launch, no matter what the average looks
 
 | Date | Change | Why | Approved by |
 |---|---|---|---|
+
+---
+
+Previous: [Agent PRD](agent-prd.md) · Next: [AI experimentation guide](ai-experimentation.md) · Related: [Responsible AI review](responsible-ai-review.md) · See the [worked example](../examples/support-agent-worked-example.md#6-define-and-build)

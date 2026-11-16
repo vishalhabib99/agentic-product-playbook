@@ -20,3 +20,7 @@ The same word means different things on different teams. Agree on these definiti
 ## One rule
 
 Report containment, resolution, and false containment **together**, every time. Any one of them alone can be made to look good.
+
+---
+
+Related: [Vision, North Star and metric tree](north-star-metric-tree.md) · [AI unit economics](ai-unit-economics.md) · [Agent PRD](agent-prd.md)

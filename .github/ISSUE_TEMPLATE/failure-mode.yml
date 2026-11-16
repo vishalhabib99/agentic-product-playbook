@@ -1,0 +1,34 @@
+name: New failure mode
+description: Share a way an AI product or agent failed in production (anonymized)
+title: "Failure mode: "
+labels: ["failure-mode"]
+body:
+  - type: markdown
+    attributes:
+      value: "Please anonymize everything: no company names, customer data, or internal numbers. Describe the pattern, not the incident."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What did the product do, and who noticed?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it got past testing
+      description: Why didn't the demo or eval catch it?
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: The review question that would have caught it
+      description: One question a PM could ask before launch.
+    validations:
+      required: true
+  - type: textarea
+    id: signal
+    attributes:
+      label: The signal to watch
+      description: The metric or log pattern that shows it in production.

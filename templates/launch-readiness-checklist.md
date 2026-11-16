@@ -33,4 +33,4 @@ The same questions make up the interactive [Agent Readiness Scorecard](https://v
 
 ---
 
-Related: [7 failure modes](../failure-modes.md) · [Agent PRD](agent-prd.md) · [Eval plan](eval-plan.md) · [Metrics glossary](metrics-glossary.md)
+Related: [7 failure modes](../failure-modes.md) · [Agent PRD](agent-prd.md) · [Eval plan](eval-plan.md) · [Metrics glossary](metrics-glossary.md) · [AI experimentation guide](ai-experimentation.md) · Next: [Post-launch runbook](post-launch-runbook.md) · See the [worked example](../examples/support-agent-worked-example.md#8-launch)

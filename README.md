@@ -1,6 +1,6 @@
 # Agentic Product Playbook
 
-**Templates and checklists for shipping AI agents that hold up in production, not just in the demo.** Written for product managers, product leaders, and the engineers who build with them.
+**The AI product manager's playbook, from strategy to sunset, with extra depth on shipping AI agents that hold up in production.** Templates, a fully worked example, and interactive diagrams. Written for product managers, product leaders, and the engineers who build with them. Works for any AI product at any company: consumer, B2B SaaS, marketplace, or developer platform.
 
 ### [→ Take the 3-minute Agent Readiness Scorecard](https://vishalhabib99.github.io/agentic-product-playbook/)
 
@@ -8,7 +8,25 @@
 
 ---
 
-## Start here: 7 ways agents fail in production
+## Templates by phase
+
+The full lifecycle, in order. Each phase ends with a gate; each template tells you what that gate is.
+
+| # | Phase | Template | The question it answers |
+|---|---|---|---|
+| 1 | Strategy | [AI strategy memo](templates/ai-strategy-memo.md) | Where does AI earn a place, and build, buy, or fine-tune? |
+| 2 | Vision | [Vision, North Star and metric tree](templates/north-star-metric-tree.md) | What does winning look like, and how much autonomy should it reach? |
+| 3 | Discovery | [Discovery kit](templates/discovery-kit.md) | Is the problem real, and can a model actually solve it? |
+| 4 | Roadmap | [Roadmap prioritization](templates/roadmap-prioritization.md) · [AI unit economics and pricing](templates/ai-unit-economics.md) | Which bets first, and does each task make money? |
+| 5 | Define | [Agent PRD](templates/agent-prd.md) · [Eval plan](templates/eval-plan.md) · [Metrics glossary](templates/metrics-glossary.md) | What may it do alone, and what's the launch bar? |
+| 6 | Build | [AI experimentation guide](templates/ai-experimentation.md) | How do we test something that answers differently each time? |
+| 7 | Trust review | [Responsible AI review](templates/responsible-ai-review.md) | How can it hurt people, and does it fail safely? |
+| 8 | Launch | [Launch readiness checklist](templates/launch-readiness-checklist.md) | Are we ready for go / no-go? |
+| 9 | Operate | [Post-launch runbook](templates/post-launch-runbook.md) | Who owns it after launch, and when do we retire it? |
+
+**See every template filled in:** [Worked example: a support agent, strategy to sunset](examples/support-agent-worked-example.md). It's a made-up company with illustrative numbers and real arithmetic you can check.
+
+## Agents in production: 7 ways they fail
 
 None of these show up in a demo. All of them show up in week two. **[Read all seven, with the review question that catches each one →](failure-modes.md)**
 
@@ -20,28 +38,17 @@ None of these show up in a demo. All of them show up in week two. **[Read all se
 6. **Tool descriptions the model can't use.** It picks tools by their docs. Missing docs mean it guesses.
 7. **Nobody owns it after launch.** The model or a prompt changes, quality drifts, and nobody notices.
 
-## See it: how GenAI and agentic requests flow
-
-### [→ Open the interactive request-flow diagrams](https://vishalhabib99.github.io/agentic-product-playbook/request-flow/)
-
-Nine production patterns as clickable sequence diagrams, from user input to output: assistant → RAG → tool agent, multi-agent team, coding agent, computer-use agent, deep research, real-time voice, image generation, background agent, and document AI. Every step shows what it does, what it protects against, and what happens when it fails. Includes a RAG explorer (vector, hybrid + rerank, GraphRAG, agentic, SQL) and a pattern map. Reviewed regularly as the field moves; see "What changed" at the bottom of the page.
-
 ## See it: the AI PM playbook, strategy to sunset
 
 ### [→ Open the AI PM playbook](https://vishalhabib99.github.io/agentic-product-playbook/ai-pm-playbook/)
 
 The full product development lifecycle for any AI product, as one sequence diagram across eight roles: strategy, vision, customer research, roadmap, define, build, trust review, launch, and operate. Each phase ends with a gate. Includes the metrics stack (North Star Metric, input metrics, KPIs, AI quality, guardrails) with examples for consumer, B2B SaaS, marketplace and developer products, customer research methods by phase, and the pitfall to avoid at each step.
 
-## Templates
+## See it: how GenAI and agentic requests flow
 
-Copy them, fork them, and make them yours.
+### [→ Open the interactive request-flow diagrams](https://vishalhabib99.github.io/agentic-product-playbook/request-flow/)
 
-| Template | Use it when |
-|---|---|
-| [Agent PRD](templates/agent-prd.md) | Scoping a new agent: autonomy levels, the top-harm error, handoff rules |
-| [Eval plan](templates/eval-plan.md) | Setting launch gates *before* the first eval run |
-| [Launch readiness checklist](templates/launch-readiness-checklist.md) | The go/no-go review. It asks the same 15 questions as the scorecard. |
-| [Metrics glossary](templates/metrics-glossary.md) | Agreeing on what "containment", "resolution", and "automation" mean before anyone presents a number |
+Nine production patterns as clickable sequence diagrams, from user input to output: assistant → RAG → tool agent, multi-agent team, coding agent, computer-use agent, deep research, real-time voice, image generation, background agent, and document AI. Every step shows what it does, what it protects against, and what happens when it fails. Includes a RAG explorer (vector, hybrid + rerank, GraphRAG, agentic, SQL) and a pattern map. Reviewed regularly as the field moves; see "What changed" at the bottom of the page.
 
 ## Go further
 
@@ -56,7 +63,7 @@ Everything here is general practice. Nothing is internal to any employer.
 
 ## Contributing
 
-Seen a failure mode that isn't on the list? [Open an issue](https://github.com/vishalhabib99/agentic-product-playbook/issues/new) with what happened (anonymized) and how you caught it, or should have. Good additions get credited.
+Seen a failure mode that isn't on the list, or a template that's missing a question? [Open an issue](https://github.com/vishalhabib99/agentic-product-playbook/issues/new/choose) with what happened (anonymized) and how you caught it, or should have. Good additions get credited. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
