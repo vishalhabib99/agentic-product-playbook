@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Nine GenAI and agentic AI patterns as clickable sequence diagrams, from user input to output: assistant/RAG/tool agent, multi-agent, coding agent, computer use, deep research, voice, image generation, background agent, document AI. Includes an On AWS view mapping each step to Amazon Bedrock, SageMaker AI and supporting AWS services.">
+<meta name="description" content="Nine GenAI and agentic AI patterns as clickable sequence diagrams, from user input to output, with human-in-the-loop steps highlighted and AWS, Google Cloud and Azure service mappings for every step.">
 <meta property="og:title" content="Agentic Request Flow">
 <meta property="og:description" content="Nine GenAI and agentic AI patterns as clickable sequence diagrams, input to output.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -23,6 +23,8 @@
   --accent-soft: rgba(44, 87, 224, 0.09);
   --safety: #B0650A;
   --safety-soft: rgba(176, 101, 10, 0.10);
+  --human: #7B3FC4;
+  --human-soft: rgba(123, 63, 196, 0.10);
   --llm: #0E7C76;
   --llm-soft: rgba(14, 124, 118, 0.10);
   --phase: #E8ECF2;
@@ -35,6 +37,7 @@
     --bg: #0E1217; --surface: #151A21; --ink: #E5E9EF; --muted: #98A2B1; --line: #2A323D;
     --accent: #7E9BFF; --accent-soft: rgba(126, 155, 255, 0.13);
     --safety: #EFA43C; --safety-soft: rgba(239, 164, 60, 0.13);
+    --human: #B691F2; --human-soft: rgba(182, 145, 242, 0.14);
     --llm: #3EC6BE; --llm-soft: rgba(62, 198, 190, 0.13);
     --phase: #1C222B; color-scheme: dark;
   }
@@ -43,10 +46,12 @@
   --bg: #0E1217; --surface: #151A21; --ink: #E5E9EF; --muted: #98A2B1; --line: #2A323D;
   --accent: #7E9BFF; --accent-soft: rgba(126, 155, 255, 0.13);
   --safety: #EFA43C; --safety-soft: rgba(239, 164, 60, 0.13);
+    --human: #B691F2; --human-soft: rgba(182, 145, 242, 0.14);
   --llm: #3EC6BE; --llm-soft: rgba(62, 198, 190, 0.13);
   --phase: #1C222B; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
 .wrap {
   max-width: 1320px; margin: 0 auto;
@@ -79,7 +84,8 @@ h3 { font-family: var(--f-display); font-size: 21px; margin: 0; }
 .example span { color: var(--muted); }
 .controls { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 3px; gap: 2px; }
-.seg.wrap { flex-wrap: wrap; }
+.seg.seg-wrap, .seg.view-seg { flex-wrap: wrap; }
+.seg button { white-space: nowrap; }
 .seg button { font: 500 14px var(--f-body); color: var(--muted); background: transparent; border: 0; border-radius: 7px; padding: 7px 14px; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -106,6 +112,17 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .step .hd { fill: var(--muted); }
 .step.k-safety .ln { stroke: var(--safety); }
 .step.k-safety .hd { fill: var(--safety); }
+.step.hitl .ln { stroke: var(--human); stroke-width: 2; }
+.step.hitl .hd { fill: var(--human); }
+.step.hitl .lbl .num { fill: var(--human); }
+.hitl-dot { fill: var(--human); }
+.pill.human { background: var(--human-soft); color: var(--human); }
+.kv.human { background: var(--human-soft); border-radius: 8px; padding: 10px 12px; }
+.kv.human b { color: var(--human); }
+.hitl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.hitl-card { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--human); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.hitl-card b { font-family: var(--f-display); font-size: 16px; }
+.hitl-card p { margin: 0; font-size: 14px; color: var(--muted); }
 .step.k-llm .ln { stroke: var(--llm); }
 .step.k-llm .hd { fill: var(--llm); }
 .lbl { font: 400 11.5px var(--f-mono); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
@@ -179,12 +196,14 @@ footer a { color: var(--accent); }
 .legend .aws-key { color: var(--accent); font-family: var(--f-mono); font-size: 12px; }
 .cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
 .cmp-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
-.cmp-card b { font-family: var(--f-display); font-size: 19px; }
+.cmp-card > b { font-family: var(--f-display); font-size: 19px; }
+.cmp-card li b { font-weight: 600; }
 .cmp-card .tag { font: 500 11px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .cmp-card p { margin: 0; font-size: 14px; color: var(--muted); }
 .cmp-card ul { margin: 0; padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 td.aws-cell { font-size: 13.5px; }
+@media (max-width: 440px) { .seg button { padding: 7px 9px; font-size: 13.5px; } }
 </style>
 </head>
 <body>
@@ -193,7 +212,7 @@ td.aws-cell { font-size: 13.5px; }
   <header>
     <div class="eyebrow">Sequence diagrams · GenAI and agentic AI, input to output</div>
     <h1>How GenAI and agentic AI requests move through a system</h1>
-    <p class="lede">Nine production patterns, each as a clickable sequence diagram. Pick a pattern, then click any step to see what happens, what it protects against, and what happens when it fails. Switch to <b>On AWS</b> to see the Amazon Bedrock, SageMaker AI and other AWS services behind each step.</p>
+    <p class="lede">Nine production patterns, each as a clickable sequence diagram. Pick a pattern, then click any step to see what happens, what it protects against, and what happens when it fails. Purple steps are where a human approves, confirms, takes over or reviews. Switch the view to <b>AWS</b>, <b>Google Cloud</b> or <b>Azure</b> to see the services behind each step.</p>
     <div class="stamp" id="stamp"></div>
   </header>
 
@@ -213,14 +232,17 @@ td.aws-cell { font-size: 13.5px; }
     <p id="modeNote"></p>
   </div>
   <div class="controls">
-    <div class="seg" role="group" aria-label="Stack view">
+    <div class="seg view-seg" role="group" aria-label="Stack view">
       <button id="v-generic" aria-pressed="true">Generic</button>
-      <button id="v-aws" aria-pressed="false">On AWS (Bedrock + SageMaker)</button>
+      <button id="v-aws" aria-pressed="false">AWS</button>
+      <button id="v-gcp" aria-pressed="false">Google Cloud</button>
+      <button id="v-azure" aria-pressed="false">Azure</button>
     </div>
     <p id="viewNote" class="hint"></p>
   </div>
   <div class="legend">
     <span><i style="background:var(--llm)"></i>Model step</span>
+    <span><i style="background:var(--human)"></i>Human in the loop</span>
     <span><i style="background:var(--safety)"></i>Safety control</span>
     <span><i style="background:var(--muted)"></i>Data / action</span>
     <span>Click any step, or use ← → keys</span>
@@ -236,7 +258,8 @@ td.aws-cell { font-size: 13.5px; }
       <div class="kv" id="pProtWrap"><b>Protects against</b><p id="pProt"></p></div>
       <div class="kv fail" id="pFailWrap"><b>If it fails</b><p id="pFail"></p></div>
       <div class="kv" id="pPayWrap"><b>Example payload</b><pre id="pPay"></pre></div>
-      <div class="kv aws" id="pAwsWrap" hidden><b>On AWS</b><p id="pAws"></p></div>
+      <div class="kv human" id="pHumWrap" hidden><b>Human in the loop</b><p id="pHum"></p></div>
+      <div class="kv aws" id="pAwsWrap" hidden><b id="pAwsLabel">On AWS</b><p id="pAws"></p></div>
       <div class="nav">
         <button class="btn" id="prev">Previous</button>
         <button class="btn primary" id="play">Play flow</button>
@@ -256,7 +279,7 @@ td.aws-cell { font-size: 13.5px; }
     <p class="intro">Same building blocks every time: input checks, context, a model, tools, output checks, feedback. What changes is <b>who controls the flow</b> and <b>where the human sits</b>.</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Pattern</th><th>Who controls the flow</th><th>Main risk</th><th>Key control</th><th>Seen in</th></tr></thead>
+        <thead><tr><th>Pattern</th><th>Who controls the flow</th><th>Main risk</th><th>Key control</th><th>Where the human sits</th><th>Seen in</th></tr></thead>
         <tbody id="mapBody"></tbody>
       </table>
     </div>
@@ -265,7 +288,7 @@ td.aws-cell { font-size: 13.5px; }
   <section class="section">
     <h3>Which RAG? Steps 5–6 of the assistant pattern</h3>
     <p class="intro">The bill-pay example uses <b>Hybrid + rerank</b> for policy documents, plus a memory lookup. The live balance is not RAG: it comes from a tool call in steps 11–12. Pick a type to see how steps 5–6 change.</p>
-    <div class="seg wrap" role="group" aria-label="RAG type" id="ragSeg"></div>
+    <div class="seg seg-wrap" role="group" aria-label="RAG type" id="ragSeg"></div>
     <div class="rag-card" id="ragCard" aria-live="polite"></div>
     <ul class="thumb">
       <li><b>Text questions over docs:</b> Hybrid + rerank</li>
@@ -275,9 +298,32 @@ td.aws-cell { font-size: 13.5px; }
     </ul>
   </section>
 
+
+  <section class="section" id="hitl">
+    <h3>Human in the loop: four ways people stay in control</h3>
+    <p class="intro">Every pattern keeps a person on the steps where a mistake is expensive or irreversible. Purple arrows in the diagrams mark these steps.</p>
+    <div class="hitl-grid">
+      <div class="hitl-card"><b>Approve before acting</b><p>The agent pauses and shows the exact action. Nothing runs until the person confirms. Bill pay, purchases, risky shell commands.</p></div>
+      <div class="hitl-card"><b>Clarify or take over</b><p>The person sets scope up front, or takes control mid-task: CAPTCHA and logins in a browser, a human agent on a hard call.</p></div>
+      <div class="hitl-card"><b>Review exceptions</b><p>Automation handles the confident cases; people see only what is uncertain or breaks a rule. Invoices, low-confidence form fields.</p></div>
+      <div class="hitl-card"><b>Final sign-off</b><p>A person reviews before anything ships: PR review and merge, advisor approval, legal review of ads.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="clouds">
+    <h3>Same flow on AWS, Google Cloud and Azure</h3>
+    <p class="intro">The building blocks match across clouds. Use the view switch above the diagram to see each cloud's service on every lane and step. Google renamed Vertex AI to <b>Gemini Enterprise Agent Platform</b> in 2026, and Azure AI Foundry is now <b>Microsoft Foundry</b>; the page uses the current names.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Building block</th><th>AWS</th><th>Google Cloud</th><th>Azure</th></tr></thead>
+        <tbody id="xBody"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="section" id="aws-map">
     <h3>On AWS: where Bedrock and SageMaker sit</h3>
-    <p class="intro">Every pattern above runs on the same AWS building blocks. <b>Amazon Bedrock</b> is where you <b>use</b> models and managed agent parts. <b>Amazon SageMaker AI</b> is where you <b>build, tune and host your own</b> models. Switch the diagram to <b>On AWS</b> to see the service behind each lane and step.</p>
+    <p class="intro">Every pattern above runs on the same AWS building blocks. <b>Amazon Bedrock</b> is where you <b>use</b> models and managed agent parts. <b>Amazon SageMaker AI</b> is where you <b>build, tune and host your own</b> models. Switch the diagram view to <b>AWS</b> to see the service behind each lane and step.</p>
     <div class="cmp">
       <div class="cmp-card">
         <span class="tag">Use models · serverless API</span>
@@ -323,13 +369,14 @@ td.aws-cell { font-size: 13.5px; }
     <ul class="log" id="log"></ul>
   </section>
 
-  <footer>Maintained by Vishal Habib · <a href="https://github.com/vishalhabib99/agentic-product-playbook">agentic-product-playbook</a> · Examples are illustrative; payloads are simplified.</footer>
+  <footer>Maintained by Vishal Habib · <a href="https://github.com/vishalhabib99/agentic-product-playbook">agentic-product-playbook</a> · Examples are illustrative; payloads are simplified. Cloud mappings checked against AWS, Google Cloud and Microsoft docs on Nov 15, 2026; cloud product names change often.</footer>
 </div>
 
 <script>
 (function () {
   var REVIEWED = "Nov 15, 2026";
   var LOG = [
+    ["Nov 15, 2026", "Added Google Cloud and Azure views for all 9 patterns, checked against Google and Microsoft docs (Vertex AI → Gemini Enterprise Agent Platform names, Imagen retired → Gemini image models, Azure groundedness detection retiring → Foundry evaluators). Human-in-the-loop steps now highlighted in purple, with a Where the human sits column and a four-type HITL section."],
     ["Nov 15, 2026", "Added AgentCore framework support to the step data: Runtime runs LangGraph, LangChain, CrewAI, LlamaIndex, ADK, OpenAI Agents SDK, Strands or custom code; Memory and Evaluations framework notes; Policy language is Dogwood (Cedar-compatible)."],
     ["Nov 15, 2026", "Checked every AWS mapping against AWS docs. Fixed: Nova Canvas retired (Sep 30, 2026) → Stability AI models; Bedrock Agents → Agents Classic, so AgentCore harness / code-defined agents; Nova Sonic → Nova 2 Sonic; Q Developer CLI → Kiro CLI; Amazon Q in Connect → Connect AI agents; Ground Truth, Clarify, Model Monitor and A2I marked maintenance mode."],
     ["Nov 15, 2026", "Checked AgentCore Policy against AWS docs (GA Mar 3, 2026); step 10 now notes Bedrock Guardrails inside Policy (Jun 2026)."],
@@ -430,7 +477,7 @@ td.aws-cell { font-size: 13.5px; }
         st(1, 0, `PR ready for review`, "safety", `Human reviews`, `A person reviews and merges.`, `Subtle bugs and design drift`)
       ],
       fails: [[9, "Risky command", "Pause and ask the developer before running it."], [11, "Tests keep failing", "Stop after N attempts and report what was tried."], [15, "CI fails", "The agent reads the logs and pushes a fix."]],
-      map: ["The model, inside a sandbox", "Plausible but wrong code; destructive commands", "Tests as ground truth, permission prompts, PR review", "Claude Code, Cursor, GitHub Copilot coding agent, Codex"]
+      map: ["The model, inside a sandbox", "Plausible but wrong code; destructive commands", "Tests as ground truth, permission prompts, PR review", "Claude Code, Cursor, GitHub Copilot cloud agent, Codex"]
     },
     {
       id: "computer-use", name: "Computer-use agent", short: "Sees the screen, clicks and types like a person, asks before buying.",
@@ -527,7 +574,7 @@ td.aws-cell { font-size: 13.5px; }
         st(0, 1, `send to legal review`, "safety", `Human approval`, `Regulated marketing still goes through legal and compliance review.`, `Non-compliant financial ads`)
       ],
       fails: [[2, "Prompt blocked", "Explain why and suggest an alternative."], [8, "All candidates fail checks", "Regenerate with an adjusted prompt."], [12, "Text in the image is garbled", "Regenerate, or add the text in the design tool."]],
-      map: ["Your code (fixed pipeline)", "Likeness, IP and unsafe content", "Prompt + image classifiers, C2PA labels", "Image models in design tools (Firefly, Imagen, DALL·E family)"]
+      map: ["Your code (fixed pipeline)", "Likeness, IP and unsafe content", "Prompt + image classifiers, C2PA labels", "Image models in design tools (Firefly, Gemini image models, GPT-image family)"]
     },
     {
       id: "background", name: "Background agent", short: "No prompt: an event triggers the agent, a human sees a daily digest.",
@@ -774,8 +821,287 @@ td.aws-cell { font-size: 13.5px; }
     ["Evals + feedback", "Bedrock Evaluations (LLM-as-judge, RAG evals)", "Ground Truth, Clarify, Model Monitor (maintenance mode since Jul 30, 2026); open-source FMEval", "AgentCore Observability, CloudWatch, CloudTrail"],
     ["Improve the model", "Fine-tuning, distillation, Custom Model Import", "Training jobs, HyperPod, Pipelines, Model Registry, managed MLflow", "S3 for datasets, KMS"]
   ];
+
+  // Google Cloud view. Lanes are short; steps without a note fall back to the lane services.
+  var GCP = {
+    assistant: {
+      lanes: ["Identity Platform", "Cloud Run + Apigee", "Model Armor", "Agent Runtime", "RAG Engine+Memory", "Gemini models", "MCP on Cloud Run"],
+      s: {
+        1: "Identity Platform (or Firebase Authentication) signs the user in. Cloud Armor (WAF, rate limiting) sits on the load balancer in front of Cloud Run or Apigee.",
+        3: "Model Armor screens the prompt: prompt-injection and jailbreak detection, responsible-AI filters, malicious URLs, and sensitive data via Sensitive Data Protection. Apigee quotas handle rate limits.",
+        4: "The agent runs on Agent Runtime in Gemini Enterprise Agent Platform (the 2026 name for Vertex AI; Agent Runtime was Agent Engine). Framework-agnostic: ADK, LangGraph, LangChain, LlamaIndex, AG2 or custom code.",
+        5: "RAG Engine or Agent Search (formerly Vertex AI Search) retrieves documents. Agent Platform Memory Bank holds long-term user facts.",
+        6: "Results return with source references; the Agent Search ranking API reorders them.",
+        7: "Gemini context caching reuses the stable prefix.",
+        8: "Gemini on Agent Platform with function declarations. Model Garden also serves Claude, Llama and others; custom or fine-tuned models deploy to Agent Platform Endpoints.",
+        9: "Gemini returns a functionCall part instead of text.",
+        10: "Checks in agent code (ADK before-tool callbacks) plus IAM on the agent's service account.",
+        11: "Tools run as Cloud Run services or MCP servers, called with the user's OAuth token; service secrets live in Secret Manager.",
+        15: "ADK tool confirmation pauses the tool call until the user approves; a Workflows callback is the alternative for longer waits.",
+        16: "Approval stored in Firestore; Cloud Audit Logs record the calls.",
+        17: "The Cloud Run tool executes with an idempotency key stored in Firestore.",
+        22: "The check grounding API (Agent Search) scores the answer against the tool result and sources; Model Armor screens the response for sensitive data.",
+        23: "Gemini streaming responses flow through Cloud Run to the client.",
+        25: "Agent Platform Memory Bank generates long-term memories from the session.",
+        26: "Traces go to Cloud Trace and Cloud Logging (OpenTelemetry). Agent Platform Evals scores quality; Agent Platform tuning or Managed Training uses the same data to fine-tune."
+      }
+    },
+    "multi-agent": {
+      lanes: ["Identity Platform", "ADK root agent", "ADK sub-agent", "ADK sub-agent", "Reviewer + Armor", "BigQuery / MCP"],
+      s: {
+        1: "A root agent built with ADK (or LangGraph, LangChain…) deployed on Agent Runtime.",
+        2: "Gemini writes the plan and delegates to sub-agents.",
+        3: "Sub-agents are ADK sub-agents, or remote agents reached over the A2A protocol, which Google created and donated to the Linux Foundation.",
+        4: "ADK's ParallelAgent (or an ADK 2.0 graph workflow) runs sub-agents at the same time.",
+        6: "BigQuery read through a service account with read-only roles and row-level security for this client.",
+        10: "Gemini's code execution tool computes the metrics and chart.",
+        12: "A reviewer agent on a different model or instructions, plus Model Armor on its inputs and outputs.",
+        15: "Approval task in the advisor app; every hop traced in Cloud Trace."
+      }
+    },
+    coding: {
+      lanes: ["Gemini CLI / IDE", "Agent harness", "Gemini models", "Cloud VM sandbox", "Cloud Build + Git"],
+      s: {
+        1: "Gemini CLI, Gemini Code Assist agent mode in the IDE, or Jules (an experimental asynchronous coding agent that opens PRs). Claude Code can also use Claude models from Agent Platform Model Garden.",
+        2: "GEMINI.md (Gemini CLI, Code Assist) and AGENTS.md (Jules) give project rules.",
+        3: "Gemini on Agent Platform keeps code and prompts inside the company's Google Cloud project.",
+        5: "Jules works in a cloud VM; self-hosted harnesses use Cloud Workstations or Cloud Run jobs with no production credentials.",
+        14: "The branch is pushed to GitHub or GitLab, connected through Developer Connect; branch protection stops the agent from merging.",
+        15: "Cloud Build runs tests; Artifact Analysis scans container images for vulnerabilities."
+      }
+    },
+    "computer-use": {
+      lanes: ["App", "Agent Runtime", "Gemini computer use", "Sandboxed browser", "Third-party site"],
+      s: {
+        1: "An ADK agent on Agent Runtime using Gemini's computer use tool.",
+        2: "You run the browser yourself (e.g., Playwright in a Cloud Run job or GKE sandbox); the model only returns UI actions.",
+        4: "The model gets the goal and screenshot through the Computer Use tool.",
+        5: "Gemini returns UI actions such as click (with an intent field) on a normalized 0–1000 grid.",
+        6: "Gemini flags risky actions with a safety decision; domain allowlist in agent code; Model Armor on page text.",
+        13: "A require_confirmation safety decision makes the app ask the user, then send a safety acknowledgement."
+      }
+    },
+    research: {
+      lanes: ["App", "Agent Runtime", "ADK ParallelAgent", "Web + Agent Search", "Check grounding"],
+      s: {
+        1: "A long-running ADK research agent on Agent Runtime (other frameworks work too).",
+        4: "Planning on a Gemini thinking model.",
+        5: "ADK's ParallelAgent fans sub-questions out to workers.",
+        6: "Grounding with Google Search for the web; Agent Search over internal documents.",
+        12: "The check grounding API scores each claim against its source; Agent Platform Evals grades reports offline.",
+        14: "Report stored in Cloud Storage and returned as a link."
+      }
+    },
+    voice: {
+      lanes: ["Phone (PSTN)", "CCaaS telephony", "Speech-to-Text", "Gemini Live API", "Text-to-Speech", "Cloud Run → core"],
+      s: {
+        1: "Google Cloud Contact Center as a Service (part of Gemini Enterprise for Customer Experience) or a telephony partner streams the audio.",
+        2: "Speech-to-Text streaming (Chirp models). Alternative: the Gemini Live API, native-audio speech-to-speech in one model.",
+        4: "A fast Gemini Flash model writes the filler; Text-to-Speech speaks it.",
+        6: "A Cloud Run tool runs identity verification (e.g., a one-time code).",
+        8: "A Cloud Run tool calls core banking to freeze the card.",
+        11: "Cloud Text-to-Speech (Chirp 3 HD voices) streams speech back.",
+        13: "The Live API handles barge-in natively with voice activity detection.",
+        14: "Transfer to a human queue; Agent Assist shows the human agent a summary."
+      }
+    },
+    image: {
+      lanes: ["Marketer", "Cloud Run app", "Model Armor", "Gemini (prompt)", "Gemini image model", "SynthID + GCS"],
+      s: {
+        2: "Model Armor on the prompt; the image model adds built-in safety filters.",
+        4: "Gemini expands the prompt with brand rules.",
+        5: "Gemini image models (gemini-2.5-flash-image or newer) on Agent Platform. Imagen models were retired on Jun 30, 2026.",
+        8: "The model's safety filters report blocked images; Cloud Vision SafeSearch can double-check.",
+        10: "Gemini image models embed an invisible SynthID watermark in every generated or edited image.",
+        11: "Images stored in Cloud Storage."
+      }
+    },
+    background: {
+      lanes: ["Eventarc / Gmail", "Pub/Sub + DLQ", "Workflows", "Gemini models", "Cloud Run → ERP", "Digest email"],
+      s: {
+        1: "A Gmail push notification to Pub/Sub, an Eventarc trigger, or Cloud Scheduler for scheduled jobs starts the work.",
+        2: "Pub/Sub with a dead-letter topic and retry policy; idempotency keys in Firestore.",
+        3: "Cloud Workflows calls Gemini through its Vertex AI (aiplatform) connector.",
+        4: "A Document AI processor (e.g., Custom Extractor) extracts fields with confidence scores, or Gemini with a response schema.",
+        7: "A Workflows switch step holds the hard rules.",
+        10: "A Workflows callback waits for the clerk's decision.",
+        11: "Workflows execution history, Cloud Logging and Cloud Audit Logs."
+      }
+    },
+    document: {
+      lanes: ["Cloud Storage", "Workflows", "Document AI/Gemini", "Cloud Run rules", "Review UI", "Core system"],
+      s: {
+        1: "Files land in Cloud Storage (CMEK encryption); an Eventarc event starts the pipeline.",
+        2: "Document AI classifier and splitter processors sort pages; Sensitive Data Protection finds PII to redact.",
+        3: "Document AI Custom Extractor or Gemini with a response schema; batch processing at volume.",
+        4: "Document AI returns a confidence score per extracted entity.",
+        7: "A custom review UI shows only uncertain fields; a Workflows callback waits per document.",
+        9: "Corrections become labeled data to fine-tune the Document AI Custom Extractor; Agent Platform Evals checks Gemini prompts."
+      }
+    }
+  };
+
+  // Azure view (Microsoft Foundry).
+  var AZURE = {
+    assistant: {
+      lanes: ["Entra ID sign-in", "APIM + Functions", "Content Safety", "Foundry Agent Svc", "AI Search + memory", "Foundry Models", "MCP / Functions"],
+      s: {
+        1: "Microsoft Entra ID (External ID for customers) signs the user in. Azure Front Door with WAF sits in front; Azure API Management acts as the AI gateway.",
+        2: "An Azure Function loads session state from Azure Cosmos DB.",
+        3: "Azure AI Content Safety: Prompt Shields for direct and indirect prompt attacks, plus harm-category filters. Azure Language detects PII; API Management token-limit policies cap usage.",
+        4: "The agent runs on Foundry Agent Service in Microsoft Foundry, or as your own LangGraph or Microsoft Agent Framework app.",
+        5: "Azure AI Search hybrid query (keyword + vector) with the semantic ranker; agentic retrieval (knowledge bases) for multi-part questions. Long-term memory in Foundry Agent Service memory (preview) or Cosmos DB.",
+        6: "The semantic ranker reorders results, which carry source references.",
+        7: "Azure OpenAI prompt caching reuses repeated prefixes.",
+        8: "Foundry Models: Azure OpenAI models plus Claude, Llama, Mistral and others. Model router can pick the model per request; custom models deploy to Azure Machine Learning online endpoints.",
+        9: "The model returns a tool call instead of text.",
+        10: "Checks in agent code, plus Microsoft Entra Agent ID and RBAC on the agent's identity, and API Management policies on tool APIs.",
+        11: "Tools are MCP servers or OpenAPI tools in Foundry Agent Service, backed by Azure Functions; on-behalf-of tokens come from Entra ID; secrets in Key Vault.",
+        15: "Foundry Agent Service can require approval before an MCP tool runs; Durable Functions or Logic Apps can wait for an external approval event.",
+        16: "Approval stored in Cosmos DB; Azure Monitor logs record the calls.",
+        17: "An Azure Function executes with an idempotency key stored in Cosmos DB.",
+        22: "A Foundry evaluator or your own LLM check scores the answer against the sources (Content Safety groundedness detection retires Apr 30, 2027); protected-material detection and a PII scan run on output.",
+        23: "Tokens stream to the client over server-sent events.",
+        25: "Long-term facts saved to Foundry Agent Service memory (preview) or Cosmos DB.",
+        26: "Foundry observability sends OpenTelemetry traces to Application Insights. Foundry evaluations score groundedness, relevance and agent behavior; fine-tuning runs in Foundry or Azure Machine Learning."
+      }
+    },
+    "multi-agent": {
+      lanes: ["Entra ID sign-in", "Foundry lead agent", "Foundry sub-agent", "Foundry sub-agent", "Reviewer+Safety", "Fabric / MCP"],
+      s: {
+        1: "A multi-agent app built with Microsoft Agent Framework, run as a hosted agent in Foundry Agent Service (LangGraph and others also work).",
+        3: "Sub-agents are agents in your orchestration, or remote agents reached over the A2A protocol.",
+        6: "A read-only query to Microsoft Fabric or Azure SQL with row-level security for this client.",
+        10: "The Code Interpreter tool in Foundry Agent Service computes metrics and the chart.",
+        12: "A reviewer agent plus Content Safety blocklists (custom categories are preview).",
+        15: "Approval in the advisor app; traces in Application Insights."
+      }
+    },
+    coding: {
+      lanes: ["VS Code / GitHub", "Copilot agent", "Copilot models", "Actions sandbox", "GitHub PR + CI"],
+      s: {
+        1: "GitHub Copilot cloud agent (formerly coding agent; assign it an issue) or Copilot agent mode in VS Code.",
+        2: "Repository instruction files (copilot-instructions.md) give project rules.",
+        3: "Copilot routes requests to several model families; teams with their own harness call Foundry Models directly.",
+        5: "The Copilot cloud agent works in a GitHub Actions-powered environment with a firewall limiting internet access.",
+        14: "Copilot opens a pull request; it can't merge, and branch protection applies.",
+        15: "GitHub Actions runs CI; CodeQL and secret scanning check the agent's changes."
+      }
+    },
+    "computer-use": {
+      lanes: ["App + Entra", "Foundry Agent Svc", "Computer-use model", "Browser Automation", "Third-party site"],
+      s: {
+        1: "A Foundry Agent Service agent with the Computer Use tool or the Browser Automation tool.",
+        2: "Browser Automation runs Playwright sessions in a managed workspace in your subscription.",
+        4: "The computer-use-preview model (limited access) gets the goal and screenshot.",
+        6: "Prompt Shields catch indirect prompt attacks hidden in pages; domain allowlist in agent code.",
+        13: "Pending safety checks in the model's response must be acknowledged by the user before the action runs."
+      }
+    },
+    research: {
+      lanes: ["App + Entra", "Foundry Agent Svc", "Parallel agents", "Web + AI Search", "Foundry evaluator"],
+      s: {
+        1: "A Foundry agent on the o3-deep-research model with web search, or a custom research agent.",
+        6: "The Web Search tool (Grounding with Bing) for the web; Azure AI Search for internal documents.",
+        12: "A Foundry evaluator or LLM check scores claims against sources; Foundry evaluations grade reports offline.",
+        14: "Report stored in Blob Storage and returned as a link."
+      }
+    },
+    voice: {
+      lanes: ["Phone (PSTN)", "Azure Comm Services", "Azure Speech", "Voice Live + agent", "Speech (TTS)", "Functions → core"],
+      s: {
+        1: "Azure Communication Services Call Automation streams the call audio (or Dynamics 365 Contact Center).",
+        2: "Azure Speech real-time speech-to-text. Alternative: the Voice Live API, speech-to-speech in one service.",
+        6: "An Azure Function tool runs identity verification (e.g., a one-time code).",
+        8: "An Azure Function tool calls core banking to freeze the card.",
+        11: "Azure Speech neural text-to-speech streams speech back.",
+        13: "Voice Live handles interruptions with server-side voice activity detection.",
+        14: "Transfer to a human queue in Dynamics 365 Contact Center, with a Copilot summary for the agent."
+      }
+    },
+    image: {
+      lanes: ["Marketer", "App + APIM", "Content Safety", "Foundry (prompt)", "Foundry image model", "Blob + C2PA"],
+      s: {
+        2: "Content Safety on the prompt; Azure OpenAI image models add built-in content filtering.",
+        5: "Azure OpenAI image models (GPT-image family), or FLUX models in Foundry Models (check the retirement schedule).",
+        8: "Azure OpenAI content filters on output, plus Content Safety image analysis.",
+        10: "Azure OpenAI image generation attaches C2PA Content Credentials to generated images.",
+        11: "Images stored in Blob Storage."
+      }
+    },
+    background: {
+      lanes: ["Graph / Event Grid", "Service Bus + DLQ", "Logic Apps/Durable", "Foundry Models", "Functions → ERP", "Teams / email"],
+      s: {
+        1: "A Microsoft Graph change notification for the mailbox (or a Logic Apps Outlook trigger) starts the work; Event Grid routes events.",
+        2: "Azure Service Bus queue with dead-lettering and duplicate detection.",
+        3: "Logic Apps or Durable Functions calls Foundry Models to classify.",
+        4: "Document Intelligence prebuilt invoice model with confidence scores, or Content Understanding.",
+        7: "A workflow condition holds the hard rules.",
+        10: "A Teams approval (Logic Apps) or Durable Functions external event resumes the flow.",
+        11: "Logic Apps run history, Application Insights and Azure Monitor."
+      }
+    },
+    document: {
+      lanes: ["Blob Storage", "Durable Functions", "Doc Intelligence", "Functions rules", "Review UI", "Core system"],
+      s: {
+        1: "Files land in Blob Storage; Event Grid starts the pipeline.",
+        2: "A Document Intelligence custom classification model splits and classifies files; Azure Language PII detection finds data to redact.",
+        3: "Document Intelligence prebuilt or custom extraction models, Content Understanding, or Azure OpenAI structured outputs; Azure OpenAI batch for volume.",
+        4: "Document Intelligence returns a confidence score per field.",
+        7: "A custom review UI (e.g., Power Apps) shows uncertain fields; a Durable Functions external event waits per document.",
+        9: "Corrections train a new custom model version in Document Intelligence; Foundry evaluations check LLM prompts."
+      }
+    }
+  };
+
+  var CLOUDS = {
+    aws: { label: "AWS", box: "On AWS", data: AWS },
+    gcp: { label: "Google Cloud", box: "On Google Cloud", data: GCP },
+    azure: { label: "Azure", box: "On Azure", data: AZURE }
+  };
+
+  var XROWS = [
+    ["Sign-in + edge", "Cognito, WAF, API Gateway", "Identity Platform, Cloud Armor, Apigee", "Entra ID, Front Door WAF, API Management"],
+    ["Input screening", "Bedrock Guardrails", "Model Armor", "Azure AI Content Safety (Prompt Shields)"],
+    ["Models", "Amazon Bedrock", "Gemini + Model Garden on Agent Platform", "Foundry Models (Azure OpenAI + partners)"],
+    ["RAG", "Bedrock Knowledge Bases, Rerank API", "RAG Engine, Agent Search, ranking API", "Azure AI Search (hybrid, semantic ranker, agentic retrieval)"],
+    ["Agent runtime", "Bedrock AgentCore", "Agent Runtime + ADK", "Foundry Agent Service + Microsoft Agent Framework"],
+    ["Output grounding", "Guardrails contextual grounding check", "Check grounding API (Agent Search)", "Foundry evaluators / LLM grounding check"],
+    ["Voice", "Connect, Transcribe, Polly, Nova 2 Sonic", "Contact Center as a Service, Speech-to-Text, Text-to-Speech, Gemini Live API", "Communication Services, Azure Speech, Voice Live API"],
+    ["Images", "Stability AI models on Bedrock", "Gemini image models (SynthID watermark)", "Azure OpenAI image models (C2PA)"],
+    ["Documents", "Bedrock Data Automation, Textract", "Document AI", "Document Intelligence, Content Understanding"],
+    ["Workflow + events", "Step Functions, SQS, EventBridge", "Workflows, Pub/Sub, Eventarc", "Logic Apps, Durable Functions, Service Bus, Event Grid"],
+    ["Observability + evals", "CloudWatch, Bedrock Evaluations", "Cloud Trace, Agent Platform Evals", "Application Insights, Foundry evaluations"],
+    ["Your own models", "SageMaker AI", "Agent Platform Managed Training, Endpoints, Pipelines", "Azure Machine Learning"],
+    ["Coding agent", "Kiro", "Gemini CLI, Gemini Code Assist, Jules", "GitHub Copilot cloud agent"]
+  ];
+
+  // Human-in-the-loop steps per pattern: [step numbers], plus what the human does at each.
+  var HITL = {
+    assistant: { 15: "The person sees the exact transfer and decides. The agent cannot move money without this.", 16: "The approval is recorded with who, what and when." },
+    "multi-agent": { 15: "The advisor reviews the full draft before anything reaches the client." },
+    coding: { 9: "Risky commands (deletes, installs, network, push) pause for the developer to allow or deny.", 16: "A person reviews and merges. The agent can open a PR but never merge it." },
+    "computer-use": { 13: "The person confirms the exact purchase, or takes over.", 14: "The person confirms, or handles CAPTCHA and login themselves." },
+    research: { 2: "The person sets scope before the agent spends minutes and dollars.", 3: "Scope confirmed by the person." },
+    voice: { 14: "A human agent takes the call with a summary, so the caller doesn't repeat themselves." },
+    image: { 12: "The marketer picks, edits or regenerates.", 13: "Legal and compliance approve before publishing." },
+    background: { 9: "The clerk sees only exceptions in a daily digest.", 10: "The clerk approves or rejects each exception; payment release stays human." },
+    document: { 7: "Only uncertain fields go to a reviewer, highlighted on the page.", 8: "The reviewer's corrections post to the system and feed the eval set." }
+  };
+  var HUMAN_SITS = {
+    assistant: "Approves irreversible actions (money moves) before they run",
+    "multi-agent": "Advisor signs off on the final draft",
+    coding: "Allows risky commands; reviews and merges the PR",
+    "computer-use": "Confirms purchases; takes over for CAPTCHA and logins",
+    research: "Confirms scope before the agent starts",
+    voice: "Human agent takes hard or failed-verification calls",
+    image: "Picks the image; legal approves before publishing",
+    background: "Clerk handles exceptions from the daily digest",
+    document: "Reviewer corrects low-confidence fields"
+  };
+
   var view = "generic";
-  try { if (localStorage.getItem("rf-view") === "aws") view = "aws"; } catch (e) { /* storage optional */ }
+  try { var sv = localStorage.getItem("rf-view"); if (sv && CLOUDS[sv]) view = sv; } catch (e) { /* storage optional */ }
 
   var MODE_NOTES = {
     1: "Plain GenAI: one model call, and your code controls the flow. Faded steps don't exist at this level.",
@@ -796,7 +1122,7 @@ td.aws-cell { font-size: 13.5px; }
   }
 
   function render() {
-    var onAws = view === "aws" && AWS[sc.id], laneH = onAws ? 64 : 48;
+    var cd = view !== "generic" && CLOUDS[view] ? CLOUDS[view].data[sc.id] : null, onAws = !!cd, laneH = onAws ? 64 : 48;
     var lanes = sc.lanes, last = lanes.length - 1, W = 140 + last * 130, y = 34 + laneH + (onAws ? 4 : 0), body = "";
     sc.steps.forEach(function (s, idx) {
       var n = idx + 1, ph = sc.phases[n];
@@ -820,7 +1146,9 @@ td.aws-cell { font-size: 13.5px; }
         g += '<polygon class="hd" points="' + x + ',' + (cy + 9) + ' ' + (x + dd * 10) + ',' + (cy + 4.5) + ' ' + (x + dd * 10) + ',' + (cy + 13.5) + '"></polygon>';
         g += '<text class="lbl" id="lbl-' + n + '" x="' + (x + dd * 36) + '" y="' + (cy + 5) + '"' + (dd < 0 ? ' text-anchor="end"' : '') + '>' + lbl + '</text>';
       }
-      body += '<g class="step k-' + (s.k || "none") + '" data-n="' + n + '" tabindex="0" role="button" aria-label="Step ' + n + ': ' + esc(s.title || s.l) + '">' + g + '</g>';
+      var hum = HITL[sc.id] && HITL[sc.id][n];
+      if (hum) g += '<circle class="hitl-dot" cx="16" cy="' + (y + h / 2) + '" r="4"></circle>';
+      body += '<g class="step k-' + (s.k || "none") + (hum ? ' hitl' : '') + '" data-n="' + n + '" tabindex="0" role="button" aria-label="Step ' + n + ': ' + esc(s.title || s.l) + '">' + g + '</g>';
       y += h;
     });
     var end = y + 10, head = "";
@@ -830,7 +1158,7 @@ td.aws-cell { font-size: 13.5px; }
       head += '<rect class="lane-box' + (L[2] ? ' core' : '') + '" x="' + (x - 62) + '" y="12" width="124" height="' + laneH + '" rx="8"></rect>';
       head += '<text class="lane-name" x="' + x + '" y="33" text-anchor="middle">' + esc(L[0]) + '</text>';
       head += '<text class="lane-sub" x="' + x + '" y="50" text-anchor="middle">' + esc(L[1]) + '</text>';
-      if (onAws) head += '<text class="lane-aws" x="' + x + '" y="66" text-anchor="middle">' + esc(AWS[sc.id].lanes[i]) + '</text>';
+      if (onAws) head += '<text class="lane-aws" x="' + x + '" y="66" text-anchor="middle">' + esc(cd.lanes[i]) + '</text>';
     });
     $("diagram").innerHTML = '<svg viewBox="0 0 ' + W + ' ' + (end + 12) + '" width="' + W + '" height="' + (end + 12) + '" role="img" aria-label="Sequence diagram: ' + esc(sc.name) + '">' + head + body + '</svg>';
     groups = Array.prototype.slice.call(document.querySelectorAll(".step"));
@@ -852,8 +1180,10 @@ td.aws-cell { font-size: 13.5px; }
     groups.forEach(function (g) { g.classList.toggle("active", +g.dataset.n === n); });
     $("pNum").textContent = "Step " + n + " of " + sc.steps.length;
     var pill = $("pPhase");
-    pill.textContent = s.k === "safety" ? "Safety control" : s.k === "llm" ? "Model step" : phaseOf(n);
-    pill.className = "pill" + (s.k ? " " + s.k : "");
+    var hum = HITL[sc.id] && HITL[sc.id][n];
+    pill.textContent = hum ? "Human in the loop" : s.k === "safety" ? "Safety control" : s.k === "llm" ? "Model step" : phaseOf(n);
+    pill.className = "pill" + (hum ? " human" : s.k ? " " + s.k : "");
+    $("pHum").textContent = hum || ""; $("pHumWrap").hidden = !hum;
     $("pTitle").textContent = s.title || s.l;
     var L = sc.lanes;
     $("pRoute").textContent = (s.f === s.t ? L[s.f][0] + " (internal step)" : L[s.f][0] + " → " + L[s.t][0]) + " · " + phaseOf(n);
@@ -861,8 +1191,10 @@ td.aws-cell { font-size: 13.5px; }
     $("pProt").textContent = s.prot; $("pProtWrap").hidden = !s.prot;
     $("pFail").textContent = s.fail; $("pFailWrap").hidden = !s.fail;
     $("pPay").textContent = s.pay; $("pPayWrap").hidden = !s.pay;
-    var aw = view === "aws" && AWS[sc.id] ? AWS[sc.id].s[n] : "";
-    $("pAws").textContent = aw || ""; $("pAwsWrap").hidden = !aw;
+    var cd = view !== "generic" && CLOUDS[view] ? CLOUDS[view].data[sc.id] : null, aw = "";
+    if (cd) aw = cd.s[n] || (s.f === s.t ? cd.lanes[s.f] + " (internal step)." : cd.lanes[s.f] + " → " + cd.lanes[s.t] + ".");
+    $("pAwsLabel").textContent = cd ? CLOUDS[view].box : "";
+    $("pAws").textContent = aw; $("pAwsWrap").hidden = !aw;
     if (focus && groups[n - 1]) groups[n - 1].focus({ preventScroll: true });
   }
   function step(dir) {
@@ -913,9 +1245,8 @@ td.aws-cell { font-size: 13.5px; }
   function setView(v) {
     view = v;
     try { localStorage.setItem("rf-view", v); } catch (e) { /* storage optional */ }
-    $("v-generic").setAttribute("aria-pressed", String(v === "generic"));
-    $("v-aws").setAttribute("aria-pressed", String(v === "aws"));
-    $("viewNote").textContent = v === "aws" ? "Blue line under each lane = the AWS service there. Each step's “On AWS” box says what that service does." : "Switch to On AWS to see the Bedrock, SageMaker AI and other AWS services behind every lane and step.";
+    ["generic", "aws", "gcp", "azure"].forEach(function (k) { $("v-" + k).setAttribute("aria-pressed", String(k === v)); });
+    $("viewNote").textContent = v === "generic" ? "Pick a cloud to see the service behind every lane and step." : "Blue line under each lane = the " + CLOUDS[v].label + " service there. Each step's “" + CLOUDS[v].box + "” box says what it does.";
     var keep = cur;
     render(); setMode(sc.levels ? mode : 3);
     select(visible().indexOf(keep) < 0 ? visible()[0] : keep);
@@ -944,7 +1275,7 @@ td.aws-cell { font-size: 13.5px; }
 
   // pattern map
   $("mapBody").innerHTML = SCN.map(function (s) {
-    return '<tr><td>' + esc(s.name) + '<br><button class="jump" data-id="' + s.id + '">Open diagram ↑</button></td><td>' + esc(s.map[0]) + '</td><td>' + esc(s.map[1]) + '</td><td>' + esc(s.map[2]) + '</td><td>' + esc(s.map[3]) + '</td></tr>';
+    return '<tr><td>' + esc(s.name) + '<br><button class="jump" data-id="' + s.id + '">Open diagram ↑</button></td><td>' + esc(s.map[0]) + '</td><td>' + esc(s.map[1]) + '</td><td>' + esc(s.map[2]) + '</td><td>' + esc(HUMAN_SITS[s.id] || "") + '</td><td>' + esc(s.map[3]) + '</td></tr>';
   }).join("");
   Array.prototype.forEach.call($("mapBody").querySelectorAll(".jump"), function (b) {
     b.addEventListener("click", function () { setScenario(b.dataset.id); scrollToDiagram(); });
@@ -1001,10 +1332,13 @@ td.aws-cell { font-size: 13.5px; }
     return '<tr><td>' + esc(r[0]) + '</td><td class="aws-cell">' + esc(r[1]) + '</td><td class="aws-cell">' + esc(r[2]) + '</td><td class="aws-cell">' + esc(r[3]) + '</td></tr>';
   }).join("");
   $("v-generic").addEventListener("click", function () { stop(); setView("generic"); });
-  $("v-aws").addEventListener("click", function () { stop(); setView("aws"); });
+  ["aws", "gcp", "azure"].forEach(function (k) { $("v-" + k).addEventListener("click", function () { stop(); setView(k); }); });
+  $("xBody").innerHTML = XROWS.map(function (r) {
+    return '<tr><td>' + esc(r[0]) + '</td><td class="aws-cell">' + esc(r[1]) + '</td><td class="aws-cell">' + esc(r[2]) + '</td><td class="aws-cell">' + esc(r[3]) + '</td></tr>';
+  }).join("");
 
   var startId = location.hash.slice(1);
-  if (startId === "aws") { view = "aws"; startId = ""; }
+  if (CLOUDS[startId]) { view = startId; startId = ""; }
   setScenario(startId || "assistant", true);
   setView(view);
   setRag("hybrid");
