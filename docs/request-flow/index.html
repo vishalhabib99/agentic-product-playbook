@@ -287,8 +287,8 @@ td.aws-cell { font-size: 13.5px; }
           <li><b>Converse API</b>: model calls with tool use, streaming, prompt caching, Intelligent Prompt Routing, batch inference</li>
           <li><b>Knowledge Bases</b>: managed RAG (chunk, embed, hybrid search, rerank, GraphRAG, text-to-SQL)</li>
           <li><b>Guardrails</b>: prompt-attack, content and PII filters, contextual grounding check, Automated Reasoning checks</li>
-          <li><b>Agents / AgentCore</b>: Runtime, Gateway (tools as MCP), Identity, Memory, Code Interpreter, Browser, Observability</li>
-          <li><b>Data Automation, Nova Sonic, Nova Canvas</b>: documents, speech-to-speech, image generation</li>
+          <li><b>AgentCore</b>: managed harness, Runtime, Gateway (tools as MCP), Identity, Memory, Policy, Code Interpreter, Browser, Observability. Bedrock Agents is now “Agents Classic”, closed to new customers</li>
+          <li><b>Data Automation, Nova 2 Sonic, Stability AI models</b>: documents, speech-to-speech, image generation</li>
           <li><b>Evaluations, customization</b>: LLM-as-judge and RAG evals, fine-tuning, distillation, Custom Model Import</li>
         </ul>
       </div>
@@ -299,10 +299,8 @@ td.aws-cell { font-size: 13.5px; }
         <ul>
           <li><b>JumpStart + endpoints</b>: deploy open models; real-time, async and serverless inference on chosen instances</li>
           <li><b>Training jobs + HyperPod</b>: fine-tuning to large-scale training</li>
-          <li><b>Ground Truth</b>: labeling and human preference data from user feedback</li>
-          <li><b>Clarify</b>: model evaluation and bias checks (FMEval)</li>
-          <li><b>Model Monitor</b>: drift and quality alerts on live endpoints</li>
-          <li><b>Pipelines, Model Registry, managed MLflow</b>: retrain-and-release loop; <b>A2I</b> for human review</li>
+          <li><b>Pipelines, Model Registry, managed MLflow</b>: retrain-and-release loop</li>
+          <li><b>Ground Truth, Clarify, Model Monitor, A2I</b>: labeling, evals, drift alerts, human review. In maintenance mode since Jul 30, 2026: existing customers only, no new features</li>
         </ul>
       </div>
     </div>
@@ -332,6 +330,7 @@ td.aws-cell { font-size: 13.5px; }
 (function () {
   var REVIEWED = "Nov 15, 2026";
   var LOG = [
+    ["Nov 15, 2026", "Checked every AWS mapping against AWS docs. Fixed: Nova Canvas retired (Sep 30, 2026) → Stability AI models; Bedrock Agents → Agents Classic, so AgentCore harness / code-defined agents; Nova Sonic → Nova 2 Sonic; Q Developer CLI → Kiro CLI; Amazon Q in Connect → Connect AI agents; Ground Truth, Clarify, Model Monitor and A2I marked maintenance mode."],
     ["Nov 15, 2026", "Checked AgentCore Policy against AWS docs (GA Mar 3, 2026); step 10 now notes Bedrock Guardrails inside Policy (Jun 2026)."],
     ["Nov 15, 2026", "Added the On AWS view: the AWS service behind every lane and step in all 9 patterns, led by Amazon Bedrock and Amazon SageMaker AI, plus a Bedrock vs SageMaker map."],
     ["Nov 15, 2026", "Added 8 patterns: multi-agent, coding agent, computer use, deep research, voice, image generation, background agent, document AI. Added pattern map."],
@@ -588,7 +587,7 @@ td.aws-cell { font-size: 13.5px; }
         1: "CloudFront + AWS WAF in front of Amazon API Gateway (WebSocket API for streaming). Amazon Cognito signs the user in and issues the token.",
         2: "AWS Lambda behind API Gateway loads session state (user, tier, conversation) from Amazon DynamoDB.",
         3: "Amazon Bedrock Guardrails via the ApplyGuardrail API: prompt-attack filter, content filters, denied topics, PII masking. WAF and API Gateway usage plans handle rate limits. Optional: a custom injection classifier hosted on an Amazon SageMaker AI endpoint.",
-        4: "The masked message goes to the agent on Amazon Bedrock AgentCore Runtime (an isolated session per user). Fully managed alternative: Amazon Bedrock Agents.",
+        4: "The masked message goes to the agent on Amazon Bedrock AgentCore Runtime (an isolated session per user). Config-only alternative: the AgentCore managed harness. (Amazon Bedrock Agents is now \"Agents Classic\" and closed to new customers since Jul 30, 2026.)",
         5: "Amazon Bedrock Knowledge Bases Retrieve API (hybrid search on OpenSearch Serverless, documents in S3) plus AgentCore Memory for long-term user facts. Embeddings: Titan Text Embeddings V2 on Bedrock, or your own embedding model on SageMaker AI.",
         6: "Knowledge Bases returns chunks with S3 source URIs and scores. The Bedrock Rerank API (Amazon Rerank or Cohere Rerank) reorders them. A custom reranker can run on a SageMaker AI endpoint.",
         7: "Prompt assembled in agent code (e.g., Strands Agents or LangGraph on AgentCore). Bedrock prompt caching reuses the stable prefix; Bedrock Prompt Management versions the system prompt.",
@@ -599,7 +598,7 @@ td.aws-cell { font-size: 13.5px; }
         12: "Lambda returns JSON through the Gateway. Retries with backoff live in the agent code.",
         13: "The result goes back as a toolResult block in the next Converse call.",
         14: "Converse returns another toolUse block, this time for transfer.",
-        15: "Bedrock Agents: user confirmation on the action group, or return of control to the app. Custom agents: an AWS Step Functions task token pauses the flow until the user answers.",
+        15: "AgentCore harness: an inline function tool pauses the loop and returns tool_use to the app (return of control) until the user answers. Code-defined agents can also wait on an AWS Step Functions task token.",
         16: "Approval saved in DynamoDB; AWS CloudTrail records the API calls for audit.",
         17: "Lambda calls the core system with an idempotency key stored in DynamoDB (Powertools for AWS Lambda idempotency).",
         18: "Lambda returns the confirmation through AgentCore Gateway.",
@@ -610,15 +609,15 @@ td.aws-cell { font-size: 13.5px; }
         23: "ConverseStream tokens flow to the client over the API Gateway WebSocket (or Lambda response streaming).",
         24: "The client renders the answer, sources and disclaimer.",
         25: "AgentCore Memory extracts long-term facts and summaries from the session (or write them to DynamoDB yourself).",
-        26: "Feedback lands in S3 / DynamoDB. AgentCore Observability sends traces (latency, tokens) to Amazon CloudWatch. Bedrock Evaluations (LLM-as-judge) and SageMaker Ground Truth labeling turn feedback into eval sets; Bedrock model customization or SageMaker AI training jobs use them to fine-tune."
+        26: "Feedback lands in S3 / DynamoDB. AgentCore Observability sends traces (latency, tokens) to Amazon CloudWatch. Feedback becomes eval sets that Bedrock Evaluations (LLM-as-judge) scores against; Bedrock model customization or SageMaker AI training jobs use the same data to fine-tune."
       }
     },
     "multi-agent": {
-      lanes: ["Cognito sign-in", "Bedrock supervisor", "Bedrock sub-agent", "Bedrock sub-agent", "Reviewer+Guardrail", "AgentCore Gateway"],
+      lanes: ["Cognito sign-in", "AgentCore (lead)", "AgentCore sub-agent", "AgentCore sub-agent", "Reviewer+Guardrail", "AgentCore Gateway"],
       s: {
-        1: "The advisor app sends the request to a supervisor agent: Bedrock Agents multi-agent collaboration, or a Strands / LangGraph supervisor on AgentCore Runtime.",
+        1: "The advisor app sends the request to a code-defined supervisor agent (Strands, LangGraph, Claude Agent SDK…) on AgentCore Runtime. Bedrock Agents Classic multi-agent collaboration still runs for existing customers but is closed to new ones.",
         2: "The supervisor's model on Bedrock writes the plan and routes each subtask to a collaborator agent.",
-        3: "Each collaborator is its own Bedrock agent with its own instructions, model and tools. Between services on AgentCore, agents can talk over the A2A protocol.",
+        3: "Each sub-agent is its own agent on AgentCore with its own instructions, model and tools, called as a tool (agent-as-tool) or over the A2A protocol.",
         4: "Collaborators run in parallel, each in an isolated AgentCore Runtime session.",
         5: "Web search through a tool behind AgentCore Gateway; filings from Bedrock Knowledge Bases over S3.",
         6: "A Lambda tool queries Amazon Athena or Amazon Redshift with an IAM role that is read-only and scoped to this client.",
@@ -634,9 +633,9 @@ td.aws-cell { font-size: 13.5px; }
       }
     },
     coding: {
-      lanes: ["Kiro / Q Developer", "Agent harness", "Bedrock (Claude)", "Code Interpreter", "CodeBuild + Git"],
+      lanes: ["Kiro IDE / CLI", "Agent harness", "Bedrock (Claude)", "Code Interpreter", "CodeBuild + Git"],
       s: {
-        1: "The developer runs the task in Kiro (AWS's agentic IDE) or the Amazon Q Developer CLI. Teams can also run Claude Code with models served from Amazon Bedrock.",
+        1: "The developer runs the task in Kiro (AWS's agentic IDE) or Kiro CLI (formerly the Amazon Q Developer CLI). Teams can also run Claude Code with models served from Amazon Bedrock.",
         2: "Kiro steering files and specs play the AGENTS.md role.",
         3: "Model calls go to Amazon Bedrock (Converse with tools), so code and prompts stay inside the company's AWS account and billing.",
         4: "A toolUse block asks for a search.",
@@ -650,7 +649,7 @@ td.aws-cell { font-size: 13.5px; }
         12: "Success goes back to Bedrock as a toolResult.",
         13: "Bedrock writes the summary and PR description.",
         14: "The branch is pushed to GitHub or GitLab (AWS CodeConnections); branch protection stops the agent from merging.",
-        15: "AWS CodeBuild / CodePipeline runs tests and linters; Amazon Inspector can scan images and dependencies.",
+        15: "AWS CodeBuild / CodePipeline runs tests and linters; Amazon Inspector scans container images and Lambda functions for vulnerable packages.",
         16: "A person reviews and merges."
       }
     },
@@ -672,7 +671,7 @@ td.aws-cell { font-size: 13.5px; }
         13: "Return of control to the app; the user sees the exact purchase.",
         14: "For CAPTCHA or login the user takes over in the AgentCore Browser live view; credentials come from AgentCore Identity and are never shown to the model.",
         15: "The Browser tool clicks purchase.",
-        16: "Session recording saved to S3 for audit."
+        16: "Session recording to S3 for audit (needs a custom AgentCore Browser, not the default one)."
       }
     },
     research: {
@@ -698,7 +697,7 @@ td.aws-cell { font-size: 13.5px; }
       lanes: ["Phone (PSTN)", "Amazon Connect", "Amazon Transcribe", "Lex + Bedrock", "Amazon Polly", "Lambda → core"],
       s: {
         1: "The call lands in Amazon Connect; audio streams over Amazon Kinesis Video Streams.",
-        2: "Amazon Transcribe streaming. Alternative: Amazon Nova Sonic on Bedrock, one speech-to-speech model that replaces Transcribe + LLM + Polly.",
+        2: "Amazon Transcribe streaming. Alternative: Amazon Nova 2 Sonic on Bedrock, one speech-to-speech model that replaces Transcribe + LLM + Polly.",
         3: "Transcribe partial results; Amazon Lex V2 in the Connect flow handles turn-taking and intents.",
         4: "A fast Bedrock model writes the filler line; Polly speaks it.",
         5: "Audio plays through Connect.",
@@ -709,23 +708,23 @@ td.aws-cell { font-size: 13.5px; }
         10: "The Bedrock model writes a short spoken-style reply.",
         11: "Amazon Polly (neural or generative voices) streams speech back into Connect.",
         12: "The caller hears the answer.",
-        13: "Connect and Lex handle barge-in (Nova Sonic handles it natively).",
-        14: "Connect transfers to a human queue; Contact Lens generative summaries and Amazon Q in Connect show the agent what already happened."
+        13: "Connect and Lex handle barge-in (Nova 2 Sonic handles it natively).",
+        14: "Connect transfers to a human queue; Connect's AI agents (formerly Amazon Q in Connect) show the human agent what already happened."
       }
     },
     image: {
-      lanes: ["Marketer", "API GW + Lambda", "Bedrock Guardrails", "Bedrock (Claude)", "Nova Canvas", "S3 + watermark"],
+      lanes: ["Marketer", "API GW + Lambda", "Bedrock Guardrails", "Bedrock (Claude)", "Stability (Bedrock)", "S3 + C2PA"],
       s: {
         1: "The design tool calls API Gateway + Lambda with the prompt and brand kit (reference images in S3).",
-        2: "Bedrock Guardrails on the prompt; Nova Canvas adds its own built-in content moderation.",
+        2: "Bedrock Guardrails on the prompt: content filters plus denied topics (real people, competitor brands).",
         3: "The allowed prompt moves on.",
         4: "A Bedrock text model expands the prompt with brand rules.",
-        5: "Bedrock InvokeModel with Amazon Nova Canvas (or Stability AI models on Bedrock). A custom-trained brand-style model can run on a SageMaker AI endpoint.",
+        5: "Bedrock InvokeModel with a Stability AI image model (Stable Image Ultra or Core, SD 3.5 Large). Amazon Nova Canvas was retired on Sep 30, 2026. A custom-trained brand-style model can run on a SageMaker AI endpoint.",
         6: "Generation runs inside the image model.",
         7: "Candidates return to the app.",
         8: "Bedrock Guardrails image content filters plus Amazon Rekognition content moderation and text detection.",
         9: "Passing images move on.",
-        10: "Nova Canvas embeds an invisible watermark and C2PA content credentials in every image; Bedrock can detect its watermark later.",
+        10: "Nova Canvas used to add an invisible watermark and C2PA credentials automatically, but it was retired on Sep 30, 2026. Now add C2PA content credentials in your own pipeline (e.g., the open-source C2PA SDK in Lambda) and keep generation records in S3.",
         11: "Images stored in S3 with metadata; CloudFront serves previews.",
         12: "The user picks, edits regions (inpainting) or regenerates.",
         13: "A Step Functions approval step routes the final image to legal review."
@@ -748,17 +747,17 @@ td.aws-cell { font-size: 13.5px; }
       }
     },
     document: {
-      lanes: ["S3 upload", "Step Functions", "Bedrock / Textract", "Lambda rules", "Amazon A2I", "Core system"],
+      lanes: ["S3 upload", "Step Functions", "Bedrock / Textract", "Lambda rules", "Step Fn + review UI", "Core system"],
       s: {
         1: "Files land in S3 (KMS-encrypted); an S3 event starts the pipeline.",
-        2: "Step Functions Distributed Map fans out over 10,000 files. Bedrock Data Automation splits and classifies documents; Amazon Comprehend finds PII to redact.",
+        2: "Step Functions Distributed Map fans out over 10,000 files. Bedrock Data Automation splits (splitter enabled through the API) and classifies documents; Amazon Comprehend finds PII to redact.",
         3: "A Bedrock Data Automation blueprint (your output schema), Amazon Textract Queries, or a Bedrock model with a JSON schema. Bedrock batch inference lowers cost at volume.",
         4: "Data Automation and Textract return a confidence score per field.",
         5: "Lambda runs schema and cross-field rules.",
         6: "Confident records post through Lambda to the system of record.",
-        7: "Amazon Augmented AI (A2I) human review loop shows only the uncertain fields, highlighted on the page.",
+        7: "A review UI shows only the uncertain fields, highlighted on the page; a Step Functions task token waits per document. Amazon Augmented AI (A2I) does this too, but it is closed to new customers since Jul 30, 2026.",
         8: "Corrected output is written to the system of record.",
-        9: "Corrections become labeled data (SageMaker Ground Truth). Bedrock Evaluations or SageMaker Clarify run weekly accuracy checks; fine-tune with SageMaker AI training or Bedrock customization if accuracy stalls."
+        9: "Corrections become a labeled eval set in S3. Bedrock Evaluations (or the open-source FMEval library) runs weekly accuracy checks; fine-tune with SageMaker AI training or Bedrock customization if accuracy stalls."
       }
     }
   };
@@ -767,11 +766,11 @@ td.aws-cell { font-size: 13.5px; }
     ["Input screening", "Guardrails: prompt-attack, content, denied-topic and PII filters", "Host a custom injection or toxicity classifier on an endpoint", "WAF, API Gateway, Cognito, Comprehend"],
     ["Retrieval (RAG)", "Knowledge Bases (hybrid search, GraphRAG, text-to-SQL), Rerank API, Titan embeddings", "Host your own embedding or reranker model", "OpenSearch Serverless, S3, Neptune, Redshift"],
     ["Model call", "Converse API, Intelligent Prompt Routing, prompt caching, batch inference", "Real-time or async endpoints for open or fine-tuned models (JumpStart)", "CloudWatch for tokens and latency"],
-    ["Agent loop + tools", "Bedrock Agents; AgentCore Runtime, Gateway, Identity, Memory, Policy, Code Interpreter, Browser", "—", "Lambda, Step Functions, Verified Permissions, Secrets Manager"],
-    ["Human approval", "Agents user confirmation / return of control", "A2I human review loops", "Step Functions task tokens, DynamoDB"],
+    ["Agent loop + tools", "AgentCore: managed harness, Runtime, Gateway, Identity, Memory, Policy, Code Interpreter, Browser (Agents Classic: existing customers only)", "—", "Lambda, Step Functions, Verified Permissions, Secrets Manager"],
+    ["Human approval", "AgentCore harness inline function tools (return of control)", "A2I (maintenance mode, existing customers only)", "Step Functions task tokens, DynamoDB"],
     ["Output checks", "Guardrails contextual grounding check, Automated Reasoning checks", "Custom grader model on an endpoint", "Rekognition (images)"],
-    ["Documents, voice, images", "Data Automation, Nova Sonic, Nova Canvas", "Custom vision or speech models", "Textract, Transcribe, Polly, Connect, Lex"],
-    ["Evals + feedback", "Bedrock Evaluations (LLM-as-judge, RAG evals)", "Ground Truth labeling, Clarify (FMEval), Model Monitor", "AgentCore Observability, CloudWatch, CloudTrail"],
+    ["Documents, voice, images", "Data Automation, Nova 2 Sonic, Stability AI image models", "Custom vision or speech models", "Textract, Transcribe, Polly, Connect, Lex"],
+    ["Evals + feedback", "Bedrock Evaluations (LLM-as-judge, RAG evals)", "Ground Truth, Clarify, Model Monitor (maintenance mode since Jul 30, 2026); open-source FMEval", "AgentCore Observability, CloudWatch, CloudTrail"],
     ["Improve the model", "Fine-tuning, distillation, Custom Model Import", "Training jobs, HyperPod, Pipelines, Model Registry, managed MLflow", "S3 for datasets, KMS"]
   ];
   var view = "generic";
