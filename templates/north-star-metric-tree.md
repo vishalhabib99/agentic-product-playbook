@@ -97,4 +97,4 @@ Every input metric gets a counter-metric that would expose gaming or harm.
 
 ---
 
-Previous: [AI strategy memo](ai-strategy-memo.md) · Next: [Discovery kit](discovery-kit.md) · Definitions: [Metrics glossary](metrics-glossary.md) · See the [worked example](../examples/support-agent-worked-example.md#2-vision-and-north-star)
+Previous: [AI strategy memo](ai-strategy-memo.md) · Next: [Discovery kit](discovery-kit.md) · Definitions: [Metrics glossary](metrics-glossary.md) · Full catalog: [GenAI and agentic metrics](genai-agentic-metrics.md) · See the [worked example](../examples/support-agent-worked-example.md#2-vision-and-north-star)

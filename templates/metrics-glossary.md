@@ -23,4 +23,6 @@ Report containment, resolution, and false containment **together**, every time. 
 
 ---
 
+Full catalog with formulas: [GenAI and agentic AI product metrics](genai-agentic-metrics.md)
+
 Related: [Vision, North Star and metric tree](north-star-metric-tree.md) · [AI unit economics](ai-unit-economics.md) · [Agent PRD](agent-prd.md)

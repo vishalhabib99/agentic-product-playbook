@@ -18,11 +18,13 @@ The full lifecycle, in order. Each phase ends with a gate; each template tells y
 | 2 | Vision | [Vision, North Star and metric tree](templates/north-star-metric-tree.md) | What does winning look like, and how much autonomy should it reach? |
 | 3 | Discovery | [Discovery kit](templates/discovery-kit.md) | Is the problem real, and can a model actually solve it? |
 | 4 | Roadmap | [Roadmap prioritization](templates/roadmap-prioritization.md) · [AI unit economics and pricing](templates/ai-unit-economics.md) | Which bets first, and does each task make money? |
-| 5 | Define | [Agent PRD](templates/agent-prd.md) · [Eval plan](templates/eval-plan.md) · [Metrics glossary](templates/metrics-glossary.md) | What may it do alone, and what's the launch bar? |
+| 5 | Define | [Agent PRD](templates/agent-prd.md) · [Eval plan](templates/eval-plan.md) · [GenAI and agentic metrics](templates/genai-agentic-metrics.md) · [Metrics glossary](templates/metrics-glossary.md) | What may it do alone, and what's the launch bar? |
 | 6 | Build | [AI experimentation guide](templates/ai-experimentation.md) | How do we test something that answers differently each time? |
 | 7 | Trust review | [Responsible AI review](templates/responsible-ai-review.md) | How can it hurt people, and does it fail safely? |
 | 8 | Launch | [Launch readiness checklist](templates/launch-readiness-checklist.md) | Are we ready for go / no-go? |
 | 9 | Operate | [Post-launch runbook](templates/post-launch-runbook.md) | Who owns it after launch, and when do we retire it? |
+
+**All the metrics in one place:** [GenAI and agentic AI product metrics](templates/genai-agentic-metrics.md) covers 10 layers (business value, adoption, user-perceived quality, offline evals, RAG, agent behavior, trust and safety, performance, cost, LLMOps), with a formula and a trap for each metric, picks by product type, an event schema, and a weekly review table.
 
 **See every template filled in:** [Worked example: a support agent, strategy to sunset](examples/support-agent-worked-example.md). It's a made-up company with illustrative numbers and real arithmetic you can check.
 
