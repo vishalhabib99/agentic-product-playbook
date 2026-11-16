@@ -332,6 +332,7 @@ td.aws-cell { font-size: 13.5px; }
 (function () {
   var REVIEWED = "Nov 15, 2026";
   var LOG = [
+    ["Nov 15, 2026", "Checked AgentCore Policy against AWS docs (GA Mar 3, 2026); step 10 now notes Bedrock Guardrails inside Policy (Jun 2026)."],
     ["Nov 15, 2026", "Added the On AWS view: the AWS service behind every lane and step in all 9 patterns, led by Amazon Bedrock and Amazon SageMaker AI, plus a Bedrock vs SageMaker map."],
     ["Nov 15, 2026", "Added 8 patterns: multi-agent, coding agent, computer use, deep research, voice, image generation, background agent, document AI. Added pattern map."],
     ["Nov 15, 2026", "Added the RAG explorer: vector, hybrid + rerank, GraphRAG, agentic RAG, structured / SQL."],
@@ -593,7 +594,7 @@ td.aws-cell { font-size: 13.5px; }
         7: "Prompt assembled in agent code (e.g., Strands Agents or LangGraph on AgentCore). Bedrock prompt caching reuses the stable prefix; Bedrock Prompt Management versions the system prompt.",
         8: "Amazon Bedrock Converse API with toolConfig (Claude, Nova, Llama…). Intelligent Prompt Routing can choose between models in a family. Need custom or fine-tuned weights? Call a SageMaker AI endpoint instead, or bring the weights to Bedrock with Custom Model Import.",
         9: "Converse returns stopReason \"tool_use\" with a toolUse block naming get_balance.",
-        10: "AgentCore Policy (Cedar rules enforced at the Gateway) or Amazon Verified Permissions decides allow or deny. IAM limits what the runtime can reach at all.",
+        10: "AgentCore Policy (Cedar rules enforced at the Gateway) or Amazon Verified Permissions decides allow or deny. IAM limits what the runtime can reach at all. Since June 2026, Policy can also run Bedrock Guardrails at the Gateway on tool inputs and outputs (prompt injection, harmful content, sensitive data).",
         11: "AgentCore Gateway exposes Lambda functions and internal APIs as MCP tools. AgentCore Identity supplies the user's own OAuth token (on-behalf-of) from its token vault; service secrets live in AWS Secrets Manager.",
         12: "Lambda returns JSON through the Gateway. Retries with backoff live in the agent code.",
         13: "The result goes back as a toolResult block in the next Converse call.",
