@@ -287,7 +287,7 @@ td.aws-cell { font-size: 13.5px; }
           <li><b>Converse API</b>: model calls with tool use, streaming, prompt caching, Intelligent Prompt Routing, batch inference</li>
           <li><b>Knowledge Bases</b>: managed RAG (chunk, embed, hybrid search, rerank, GraphRAG, text-to-SQL)</li>
           <li><b>Guardrails</b>: prompt-attack, content and PII filters, contextual grounding check, Automated Reasoning checks</li>
-          <li><b>AgentCore</b>: managed harness, Runtime, Gateway (tools as MCP), Identity, Memory, Policy, Code Interpreter, Browser, Observability. Bedrock Agents is now “Agents Classic”, closed to new customers</li>
+          <li><b>AgentCore</b> (any framework, e.g. LangGraph, LangChain, CrewAI, Strands; any model, in or outside Bedrock): managed harness, Runtime, Gateway (tools as MCP), Identity, Memory, Policy, Code Interpreter, Browser, Observability. Bedrock Agents is now “Agents Classic”, closed to new customers</li>
           <li><b>Data Automation, Nova 2 Sonic, Stability AI models</b>: documents, speech-to-speech, image generation</li>
           <li><b>Evaluations, customization</b>: LLM-as-judge and RAG evals, fine-tuning, distillation, Custom Model Import</li>
         </ul>
@@ -330,6 +330,7 @@ td.aws-cell { font-size: 13.5px; }
 (function () {
   var REVIEWED = "Nov 15, 2026";
   var LOG = [
+    ["Nov 15, 2026", "Added AgentCore framework support to the step data: Runtime runs LangGraph, LangChain, CrewAI, LlamaIndex, ADK, OpenAI Agents SDK, Strands or custom code; Memory and Evaluations framework notes; Policy language is Dogwood (Cedar-compatible)."],
     ["Nov 15, 2026", "Checked every AWS mapping against AWS docs. Fixed: Nova Canvas retired (Sep 30, 2026) → Stability AI models; Bedrock Agents → Agents Classic, so AgentCore harness / code-defined agents; Nova Sonic → Nova 2 Sonic; Q Developer CLI → Kiro CLI; Amazon Q in Connect → Connect AI agents; Ground Truth, Clarify, Model Monitor and A2I marked maintenance mode."],
     ["Nov 15, 2026", "Checked AgentCore Policy against AWS docs (GA Mar 3, 2026); step 10 now notes Bedrock Guardrails inside Policy (Jun 2026)."],
     ["Nov 15, 2026", "Added the On AWS view: the AWS service behind every lane and step in all 9 patterns, led by Amazon Bedrock and Amazon SageMaker AI, plus a Bedrock vs SageMaker map."],
@@ -587,13 +588,13 @@ td.aws-cell { font-size: 13.5px; }
         1: "CloudFront + AWS WAF in front of Amazon API Gateway (WebSocket API for streaming). Amazon Cognito signs the user in and issues the token.",
         2: "AWS Lambda behind API Gateway loads session state (user, tier, conversation) from Amazon DynamoDB.",
         3: "Amazon Bedrock Guardrails via the ApplyGuardrail API: prompt-attack filter, content filters, denied topics, PII masking. WAF and API Gateway usage plans handle rate limits. Optional: a custom injection classifier hosted on an Amazon SageMaker AI endpoint.",
-        4: "The masked message goes to the agent on Amazon Bedrock AgentCore Runtime (an isolated session per user). Config-only alternative: the AgentCore managed harness. (Amazon Bedrock Agents is now \"Agents Classic\" and closed to new customers since Jul 30, 2026.)",
+        4: "The masked message goes to the agent on Amazon Bedrock AgentCore Runtime (an isolated session per user). Runtime is framework- and model-agnostic: the agent can be LangGraph, LangChain, CrewAI, LlamaIndex, Google ADK, OpenAI Agents SDK, Strands or custom code, calling models in or outside Bedrock. Config-only alternative: the AgentCore managed harness. (Amazon Bedrock Agents is now \"Agents Classic\" and closed to new customers since Jul 30, 2026.)",
         5: "Amazon Bedrock Knowledge Bases Retrieve API (hybrid search on OpenSearch Serverless, documents in S3) plus AgentCore Memory for long-term user facts. Embeddings: Titan Text Embeddings V2 on Bedrock, or your own embedding model on SageMaker AI.",
         6: "Knowledge Bases returns chunks with S3 source URIs and scores. The Bedrock Rerank API (Amazon Rerank or Cohere Rerank) reorders them. A custom reranker can run on a SageMaker AI endpoint.",
-        7: "Prompt assembled in agent code (e.g., Strands Agents or LangGraph on AgentCore). Bedrock prompt caching reuses the stable prefix; Bedrock Prompt Management versions the system prompt.",
+        7: "Prompt assembled in your framework's code (LangGraph, LangChain, Strands…); AgentCore doesn't dictate the framework. Bedrock prompt caching reuses the stable prefix; Bedrock Prompt Management versions the system prompt.",
         8: "Amazon Bedrock Converse API with toolConfig (Claude, Nova, Llama…). Intelligent Prompt Routing can choose between models in a family. Need custom or fine-tuned weights? Call a SageMaker AI endpoint instead, or bring the weights to Bedrock with Custom Model Import.",
         9: "Converse returns stopReason \"tool_use\" with a toolUse block naming get_balance.",
-        10: "AgentCore Policy (Cedar rules enforced at the Gateway) or Amazon Verified Permissions decides allow or deny. IAM limits what the runtime can reach at all. Since June 2026, Policy can also run Bedrock Guardrails at the Gateway on tool inputs and outputs (prompt injection, harmful content, sensitive data).",
+        10: "AgentCore Policy (rules in natural language or Dogwood, a Cedar-compatible policy language, enforced at the Gateway) or Amazon Verified Permissions decides allow or deny. IAM limits what the runtime can reach at all. Since June 2026, Policy can also run Bedrock Guardrails at the Gateway on tool inputs and outputs (prompt injection, harmful content, sensitive data).",
         11: "AgentCore Gateway exposes Lambda functions and internal APIs as MCP tools. AgentCore Identity supplies the user's own OAuth token (on-behalf-of) from its token vault; service secrets live in AWS Secrets Manager.",
         12: "Lambda returns JSON through the Gateway. Retries with backoff live in the agent code.",
         13: "The result goes back as a toolResult block in the next Converse call.",
@@ -608,14 +609,14 @@ td.aws-cell { font-size: 13.5px; }
         22: "Bedrock Guardrails contextual grounding check (grounding and relevance scores against the tool result and chunks), Automated Reasoning checks for written policy rules, and the PII filter on output.",
         23: "ConverseStream tokens flow to the client over the API Gateway WebSocket (or Lambda response streaming).",
         24: "The client renders the answer, sources and disclaimer.",
-        25: "AgentCore Memory extracts long-term facts and summaries from the session (or write them to DynamoDB yourself).",
-        26: "Feedback lands in S3 / DynamoDB. AgentCore Observability sends traces (latency, tokens) to Amazon CloudWatch. Feedback becomes eval sets that Bedrock Evaluations (LLM-as-judge) scores against; Bedrock model customization or SageMaker AI training jobs use the same data to fine-tune."
+        25: "AgentCore Memory extracts long-term facts and summaries from the session; it works with LangGraph, LangChain, Strands and LlamaIndex (or write facts to DynamoDB yourself).",
+        26: "Feedback lands in S3 / DynamoDB. AgentCore Observability takes OpenTelemetry traces (latency, tokens) from any framework into Amazon CloudWatch; AgentCore Evaluations scores Strands or LangGraph traces. Feedback becomes eval sets that Bedrock Evaluations (LLM-as-judge) scores against; Bedrock model customization or SageMaker AI training jobs use the same data to fine-tune."
       }
     },
     "multi-agent": {
       lanes: ["Cognito sign-in", "AgentCore (lead)", "AgentCore sub-agent", "AgentCore sub-agent", "Reviewer+Guardrail", "AgentCore Gateway"],
       s: {
-        1: "The advisor app sends the request to a code-defined supervisor agent (Strands, LangGraph, Claude Agent SDK…) on AgentCore Runtime. Bedrock Agents Classic multi-agent collaboration still runs for existing customers but is closed to new ones.",
+        1: "The advisor app sends the request to a code-defined supervisor agent on AgentCore Runtime, in any framework (LangGraph, LangChain, CrewAI, Strands, Claude Agent SDK…). Bedrock Agents Classic multi-agent collaboration still runs for existing customers but is closed to new ones.",
         2: "The supervisor's model on Bedrock writes the plan and routes each subtask to a collaborator agent.",
         3: "Each sub-agent is its own agent on AgentCore with its own instructions, model and tools, called as a tool (agent-as-tool) or over the A2A protocol.",
         4: "Collaborators run in parallel, each in an isolated AgentCore Runtime session.",
@@ -677,7 +678,7 @@ td.aws-cell { font-size: 13.5px; }
     research: {
       lanes: ["App + Cognito", "AgentCore Runtime", "Parallel workers", "KB + web search", "Bedrock Guardrails"],
       s: {
-        1: "Starts a long job on AgentCore Runtime, which supports sessions of up to 8 hours, so minutes-long research doesn't time out.",
+        1: "Starts a long job on AgentCore Runtime, which supports sessions of up to 8 hours, so minutes-long research doesn't time out. The research graph can be LangGraph or any other framework.",
         2: "The lead agent asks the user to confirm scope before spending.",
         3: "The answer comes back into the same session.",
         4: "Planning on a reasoning model in Bedrock (extended thinking).",
@@ -766,7 +767,7 @@ td.aws-cell { font-size: 13.5px; }
     ["Input screening", "Guardrails: prompt-attack, content, denied-topic and PII filters", "Host a custom injection or toxicity classifier on an endpoint", "WAF, API Gateway, Cognito, Comprehend"],
     ["Retrieval (RAG)", "Knowledge Bases (hybrid search, GraphRAG, text-to-SQL), Rerank API, Titan embeddings", "Host your own embedding or reranker model", "OpenSearch Serverless, S3, Neptune, Redshift"],
     ["Model call", "Converse API, Intelligent Prompt Routing, prompt caching, batch inference", "Real-time or async endpoints for open or fine-tuned models (JumpStart)", "CloudWatch for tokens and latency"],
-    ["Agent loop + tools", "AgentCore: managed harness, Runtime, Gateway, Identity, Memory, Policy, Code Interpreter, Browser (Agents Classic: existing customers only)", "—", "Lambda, Step Functions, Verified Permissions, Secrets Manager"],
+    ["Agent loop + tools", "AgentCore: managed harness, Runtime, Gateway, Identity, Memory, Policy, Code Interpreter, Browser. Framework-agnostic: bring LangGraph, LangChain, CrewAI or Strands (Agents Classic: existing customers only)", "—", "Lambda, Step Functions, Verified Permissions, Secrets Manager"],
     ["Human approval", "AgentCore harness inline function tools (return of control)", "A2I (maintenance mode, existing customers only)", "Step Functions task tokens, DynamoDB"],
     ["Output checks", "Guardrails contextual grounding check, Automated Reasoning checks", "Custom grader model on an endpoint", "Rekognition (images)"],
     ["Documents, voice, images", "Data Automation, Nova 2 Sonic, Stability AI image models", "Custom vision or speech models", "Textract, Transcribe, Polly, Connect, Lex"],
