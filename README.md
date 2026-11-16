@@ -26,6 +26,12 @@ None of these show up in a demo. All of them show up in week two. **[Read all se
 
 Nine production patterns as clickable sequence diagrams, from user input to output: assistant → RAG → tool agent, multi-agent team, coding agent, computer-use agent, deep research, real-time voice, image generation, background agent, and document AI. Every step shows what it does, what it protects against, and what happens when it fails. Includes a RAG explorer (vector, hybrid + rerank, GraphRAG, agentic, SQL) and a pattern map. Reviewed regularly as the field moves; see "What changed" at the bottom of the page.
 
+## See it: the AI PM playbook, strategy to sunset
+
+### [→ Open the AI PM playbook](https://vishalhabib99.github.io/agentic-product-playbook/ai-pm-playbook/)
+
+The full product development lifecycle for any AI product, as one sequence diagram across eight roles: strategy, vision, customer research, roadmap, define, build, trust review, launch, and operate. Each phase ends with a gate. Includes the metrics stack (North Star Metric, input metrics, KPIs, AI quality, guardrails) with examples for consumer, B2B SaaS, marketplace and developer products, customer research methods by phase, and the pitfall to avoid at each step.
+
 ## Templates
 
 Copy them, fork them, and make them yours.
