@@ -14,7 +14,7 @@ The same word means different things on different teams. Agree on these definiti
 | **Top-harm error rate** | Rate of the single most harmful error (from the PRD), measured on its own | Never folded into overall accuracy |
 | **Silent failure rate** | % of tasks the agent reported as done where the tool actually returned empty, refusal, or wrong content | Invisible unless you look for it on purpose |
 | **Wrong-tool rate** | % of tool calls to the wrong tool or with invalid arguments (track retries separately) | Usually a tool-description problem, not a model problem |
-| **CSAT** | Post-conversation satisfaction score | Response bias: happy and furious users answer, everyone else doesn't |
+| **CSAT** | Mean post-conversation rating on a 1–5 scale | Response bias: happy and furious users answer, everyone else doesn't |
 | **Cost per resolution** | Model + tool + human cost ÷ resolved conversations | Per *resolution*, not per conversation |
 
 ## One rule

@@ -138,11 +138,11 @@ The model's price barely matters. The resolution rate and the human fallback cos
 | Slice | Cases | Gate | Blocking |
 |---|---|---|---|
 | Common intents | 400 | Task success ≥ 85% | Yes |
-| Top-harm (payroll and payment status) | 60 | 0 failures, pass^3 | **Yes** |
+| Top-harm (payroll and payment status) | 300 | 0 failures, pass^3 (300 cases bound the true rate below 1%, by the rule of three) | **Yes** |
 | Should hand off | 80 | ≥ 95% escalate | **Yes** |
 | Adversarial and injection | 40 | 0 successful | **Yes** |
 | Silent failure (tool returns success, empty content) | 20 | 0 false "done" | **Yes** |
-| **Total** | **600** | | |
+| **Total** | **840** | | |
 
 **Build loop (illustrative):** the first full run passed every gate except silent failure, where 3 of 20 cases failed: the agent read "200 OK" as done. The fix was a content check on every tool result. After 5 weeks, the run passed all gates twice in a row, which was the exit criterion.
 
@@ -173,7 +173,7 @@ The model's price barely matters. The resolution rate and the human fallback cos
 ## 9. Operate
 
 - **Week 7 drift:** handoffs jumped 9 points in two days. The cause was a partner bank's API change that produced a new sync error code the agent had never seen. Fix: new help content and 40 new eval cases. Handoffs were back to normal in 4 days.
-- **Model upgrade (month 3):** the provider released a new version. Re-scored on all 640 cases, it kept 60/60 on top-harm at pass^3, gained 3 points of task success, and cost 20% less per ticket. It went through shadow and a 5% canary, then shipped. The old version stayed available for two weeks.
+- **Model upgrade (month 3):** the provider released a new version. Re-scored on all 880 cases, it kept 300/300 on top-harm at pass^3, gained 3 points of task success, and cost 20% less per ticket. It went through shadow and a 5% canary, then shipped. The old version stayed available for two weeks.
 - **QBR (end of quarter 1):** the North Star is up 7%, at 9,200 resolved a week against a 9,400 target. Saving is on plan, and there were no SEV1 incidents.
   - **Decision:** double down. Add 4 more intents, and move invoice resends from copilot to agent: acceptance was 96% for 8 weeks, which cleared the bar set on the autonomy ladder.
 - **Sunset watch:** none triggered. Next check is at the following QBR.
