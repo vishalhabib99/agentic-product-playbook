@@ -27,7 +27,7 @@ The rule behind this template: **write the thresholds down and get sign-off befo
 
 | Gate | Metric | Threshold | Blocking? |
 |---|---|---|---|
-| Top-harm error | Rate on top-harm slice | 0 failures | **Yes** |
+| Top-harm error | Rate on top-harm slice | 0 failures, on at least 3 ÷ target rate cases (300 to show < 1%) | **Yes** |
 | Correct handoff | % of should-hand-off cases that escalate | ≥ 95% | **Yes** |
 | Task success | % resolved correctly on the happy path | ≥ __% | Yes |
 | Silent failure | % where the agent reports success on an empty/refusal response | 0% | **Yes** |

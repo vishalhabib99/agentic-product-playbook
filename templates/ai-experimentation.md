@@ -50,7 +50,7 @@ The same input can produce different outputs. Plan for it.
 | Decision rule | Written before launch: ship / iterate / stop |
 
 **AI-specific traps**
-- **Novelty effect:** usage spikes in week one because it's new. Judge on weeks 2+.
+- **Novelty effect:** usage spikes in week one because it's new. Exclude at least week 1, and confirm the lift still holds in weeks 4+ (or in the long-term holdout) before calling it.
 - **Acceptance is not accuracy:** users may accept wrong answers. Spot-check accepted outputs.
 - **The model changed mid-test:** pin the version, or restart the test.
 - **Cost is a metric:** a win that doubles cost per task may not be a win. Report it.
