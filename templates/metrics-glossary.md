@@ -1,6 +1,6 @@
 # Agent metrics glossary
 
-The same word means different things on different teams. Agree on these definitions before anyone presents a number.
+**Phases: Vision → Operate.** The same word means different things on different teams. Agree on these definitions before anyone presents a number.
 
 | Metric | Definition | Watch out for |
 |---|---|---|
@@ -20,6 +20,10 @@ The same word means different things on different teams. Agree on these definiti
 ## One rule
 
 Report containment, resolution, and false containment **together**, every time. Any one of them alone can be made to look good.
+
+## Exit gate
+
+**Before any metric is presented:** it uses the definition here, or the deck says how its definition differs.
 
 ---
 

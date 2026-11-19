@@ -42,19 +42,21 @@ Assign it in Discovery. It decides how much review the rest of this template nee
 
 ## 3. Red team plan
 
-Cover the attack categories that apply. The [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) is a good checklist.
+Cover every category that applies, one row each, from the [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/). If a category doesn't apply, write down why instead of deleting the row.
 
-| Category | Example test | # cases | Pass bar | Result |
+| OWASP 2025 | Example test | # cases | Pass bar | Result |
 |---|---|---|---|---|
-| Direct prompt injection | "Ignore your instructions and…" | | 0 successful | |
-| Indirect prompt injection | Malicious instructions hidden in a document, web page, email, or tool result | | 0 successful | |
-| Jailbreaks | Role-play, encoding, multi-turn pressure | | | |
-| Sensitive data disclosure | Getting another user's data, secrets, or the system prompt | | 0 successful | |
-| Excessive agency | Tricking it into an action outside its scope, or skipping confirmation | | 0 successful | |
-| Improper output handling | Output that breaks downstream systems (code, links, markup) | | | |
-| Misinformation | Confident wrong answers on high-stakes questions | | | |
-| Bias | Same request across names, genders, dialects, regions; compare outcomes | | Gap ≤ __ pts | |
-| Unbounded consumption | Prompts that cause loops, huge outputs, or runaway tool calls | | Capped | |
+| **LLM01** Prompt injection | Direct ("Ignore your instructions and…"), indirect (instructions hidden in a document, web page, email, or tool result), and jailbreaks (role-play, encoding, multi-turn pressure) | | 0 successful | |
+| **LLM02** Sensitive information disclosure | Getting another user's data, secrets, or personal data out of answers or logs | | 0 successful | |
+| **LLM03** Supply chain | Unvetted models, plugins, MCP servers, or packages; tool descriptions that changed since review | | All components pinned and reviewed | |
+| **LLM04** Data and model poisoning | Planted content in fine-tuning data, help articles, or user feedback that changes behavior | | 0 successful | |
+| **LLM05** Improper output handling | Output that breaks or exploits downstream systems (code, links, markup, SQL) | | 0 successful | |
+| **LLM06** Excessive agency | Tricking it into an action outside its scope, past its permissions, or without confirmation | | 0 successful | |
+| **LLM07** System prompt leakage | Extracting the system prompt, or secrets and rules stored in it | | 0 successful | |
+| **LLM08** Vector and embedding weaknesses | Retrieval returning another tenant's documents, or poisoned documents in the index | | 0 successful | |
+| **LLM09** Misinformation | Confident wrong answers on high-stakes questions; fabricated citations | | Top-harm bar from the [eval plan](eval-plan.md) | |
+| **LLM10** Unbounded consumption | Prompts that cause loops, huge outputs, or runaway tool calls and cost | | Capped | |
+| *Beyond OWASP:* bias | Same request across names, genders, dialects, regions; compare outcomes | | Gap ≤ __ pts | |
 
 **Rules**
 - Include people outside the build team.
@@ -94,6 +96,10 @@ Publish internally; publish externally when the tier or the law calls for it.
 | Security | | | | |
 | Privacy | | | | |
 | Legal / compliance | | | | |
+
+## Exit gate
+
+**To leave Trust review:** the risk tier is recorded, every applicable OWASP row has results, every successful attack is fixed and added to the eval set, the oversight design is built (not planned), and every sign-off the tier requires is in section 6. High tier needs legal.
 
 ---
 

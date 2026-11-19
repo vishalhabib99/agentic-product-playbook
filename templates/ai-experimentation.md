@@ -65,6 +65,10 @@ The same input can produce different outputs. Plan for it.
 | Ramp | 10% → 50% | 1–2 weeks each | Primary metric flat or up; guardrails hold | Any guardrail breached |
 | GA | 100% (keep holdout) | | | Kill switch stays live |
 
+## Exit gate
+
+**To leave each ramp step:** the primary metric, guardrails, any non-inferiority margin, and the sample size were written before the test, and the decision follows the rule written in advance.
+
 ---
 
 Related: [Eval plan](eval-plan.md) · [Launch readiness checklist](launch-readiness-checklist.md) · [Post-launch runbook](post-launch-runbook.md)

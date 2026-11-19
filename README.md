@@ -44,7 +44,7 @@ None of these show up in a demo. All of them show up in week two. **[Read all se
 
 ### [→ Open the AI PM playbook](https://vishalhabib99.github.io/agentic-product-playbook/ai-pm-playbook/)
 
-The full product development lifecycle for any AI product, as one sequence diagram across eight roles: strategy, vision, customer research, roadmap, define, build, trust review, launch, and operate. Each phase ends with a gate. Includes the metrics stack (North Star Metric, input metrics, KPIs, AI quality, guardrails) with examples for consumer, B2B SaaS, marketplace and developer products, customer research methods by phase, and the pitfall to avoid at each step.
+The full product development lifecycle for any AI product, as one sequence diagram across eight roles: strategy, vision, discovery, roadmap, define, build, trust review, launch, and operate. Each phase ends with a gate. Includes the metrics stack (North Star Metric (NSM), input metrics, KPIs, AI quality, guardrails) with examples for consumer, B2B SaaS, marketplace and developer products, customer research methods by phase, and the pitfall to avoid at each step.
 
 ## See it: how GenAI and agentic requests flow
 

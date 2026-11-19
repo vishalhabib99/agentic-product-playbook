@@ -1,6 +1,6 @@
 # Agent eval plan template
 
-The rule behind this template: **write the thresholds down and get sign-off before any results exist.** Otherwise the "gate" just ends up matching whatever number you got.
+**Phases: written in Define, run through Build, re-run in Launch and Operate.** The rule behind this template: **write the thresholds down and get sign-off before any results exist.** Otherwise the "gate" just ends up matching whatever number you got.
 
 ---
 
@@ -35,6 +35,10 @@ The rule behind this template: **write the thresholds down and get sign-off befo
 
 A single blocking gate failure means no launch, no matter what the average looks like.
 
+**Size zero-failure gates with the rule of three.** With 0 failures in n cases, the approximate 95% upper bound on the true failure rate is 3 ÷ n (good for n of about 30 or more). So 0 in 300 proves under 1%, 0 in 3,000 proves under 0.1%, and 0 in 50 proves only under 6%. Pick the rate you need to prove, then set n = 3 ÷ rate.
+
+**Run each case more than once.** The model can answer differently each time, so gate on **pass^k**: a case passes only if it passes on **all** k runs (e.g. k = 3). Don't confuse it with **pass@k**, which passes if **any** of k runs succeeds; that measures capability, not reliability. Users get one run, so launch gates use pass^k.
+
 ## 4. How cases are graded
 
 - **Automated checks:** (exact match, tool-call trace, schema checks)
@@ -52,6 +56,10 @@ A single blocking gate failure means no launch, no matter what the average looks
 | Date | Change | Why | Approved by |
 |---|---|---|---|
 
+## Exit gate
+
+**To leave Build:** thresholds were signed before the first run, every blocking gate passes at pass^k on two consecutive full runs, every zero-failure slice has at least 3 ÷ target-rate cases, and every test-set change since the first run is in the changelog.
+
 ---
 
-Previous: [Agent PRD](agent-prd.md) · Next: [AI experimentation guide](ai-experimentation.md) · Related: [Responsible AI review](responsible-ai-review.md) · See the [worked example](../examples/support-agent-worked-example.md#6-define-and-build)
+Previous: [Agent PRD](agent-prd.md) · Next: [AI experimentation guide](ai-experimentation.md) · Related: [Responsible AI review](responsible-ai-review.md) · See the [worked example](../examples/support-agent-worked-example.md#5-define)

@@ -69,11 +69,11 @@ Default to the cheapest option that clears the quality bar. Move down the table 
 
 Two or three, not ten.
 
-| Bet | Customer outcome | North Star input it moves | Autonomy target (assist / copilot / agent) | First proof point and date | Kill criteria |
+| Bet | Customer outcome | North Star input it moves | Autonomy target (Assist / Copilot / Agent) | First proof point and date | Kill criteria |
 |---|---|---|---|---|---|
 | | | | | | |
 
-Autonomy levels: **assist** (suggests, user does the work), **copilot** (drafts, user approves), **agent** (acts on its own within limits). Most bets should start one level lower than the team wants.
+Autonomy levels, from the [autonomy ladder](north-star-metric-tree.md#2-autonomy-ladder): **Manual** (no AI), **Assist** (suggests, user does the work), **Copilot** (drafts, user approves), **Agent** (acts on its own within limits). Most bets should start one level lower than the team wants.
 
 ## 8. What we will not do
 
@@ -91,6 +91,10 @@ Name the tempting AI ideas you are saying no to, and why. This section prevents 
 ## 10. The ask
 
 People, budget, timeline, and the date we come back with evidence.
+
+## Exit gate
+
+**To leave Strategy:** leadership has picked the bet (or said no), named an owner and a team, and agreed the kill criteria and the date the team comes back with evidence.
 
 ---
 

@@ -33,7 +33,7 @@ Fill in one row per step of the task. Use your provider's current prices. The nu
 | **Total monthly cost** | | |
 | **Cost per successful outcome** | | |
 
-The [worked example](../examples/support-agent-worked-example.md#5-unit-economics) walks through this table with real arithmetic.
+The [worked example](../examples/support-agent-worked-example.md#unit-economics-the-cost-check-for-the-roadmap-gate) walks through this table with real arithmetic.
 
 ## 3. Levers, in the order to try them
 
@@ -76,6 +76,10 @@ How you charge decides who carries the cost risk.
 - [ ] The price metric matches the value metric in the [metric tree](north-star-metric-tree.md).
 - [ ] Rate limits or fair-use terms exist for abuse and runaway agents.
 - [ ] We re-check margin on every model change.
+
+## Exit gate
+
+**To leave Roadmap:** cost per successful task at target volume is written down, the sensitivity table covers the two biggest cost drivers, and the bet still makes sense in its worst row.
 
 ---
 

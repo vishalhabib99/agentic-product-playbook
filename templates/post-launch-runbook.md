@@ -43,7 +43,7 @@ The rule behind this runbook: **an AI product changes even when your code doesn'
 
 New model versions arrive often. Treat each one as a release.
 
-1. **Re-score** the new model on the full golden set, including top-harm and red-team cases. Use pass^k, not one run.
+1. **Re-score** the new model on the full golden set, including top-harm and red-team cases. Use pass^k (every case must pass on all k runs), not a single run.
 2. **Compare** side by side with the current model: quality, cost per task, latency.
 3. **Shadow** on live traffic for a few days.
 4. **Canary** at 1–5%, then ramp using the [experimentation guide](ai-experimentation.md#5-ramp-plan).
@@ -94,6 +94,10 @@ Retire or rethink the feature when any of these hold for two quarters:
 - A platform or vendor now does it better, and users have moved on.
 
 **Retiring it well:** tell users in advance, offer the old workflow or an export, keep the kill switch until the last user is moved, and archive the eval set and lessons learned.
+
+## Exit gate
+
+**At every QBR:** a grow, fix, or retire decision is recorded with the evidence behind it, any autonomy change cites the evidence the ladder asked for, and an owner is named for the next quarter.
 
 ---
 

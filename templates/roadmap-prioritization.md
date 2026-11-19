@@ -58,6 +58,10 @@ Write these down when the bet starts, not when it's failing.
 3. What's the total inference spend at target volume across all Now bets?
 4. Which non-AI work did we drop to fund these, and is that the right trade?
 
+## Exit gate
+
+**To leave Roadmap:** every Now bet has a score, a run cost at target volume, a risk tier, and kill criteria, and leadership has signed the Now / Next / Later.
+
 ---
 
 Previous: [Discovery kit](discovery-kit.md) · Next: [Agent PRD](agent-prd.md) · See the [worked example](../examples/support-agent-worked-example.md#4-roadmap)

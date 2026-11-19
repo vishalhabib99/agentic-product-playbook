@@ -95,6 +95,10 @@ Every input metric gets a counter-metric that would expose gaming or harm.
 - **Monthly:** North Star trend and the AI quality metrics.
 - **Quarterly:** is the North Star still the right one? Did input metrics actually move it?
 
+## Exit gate
+
+**To leave Vision:** one North Star that passes all five tests, three to five input metrics with a guardrail each, and a target rung on the autonomy ladder for each workflow with the evidence needed to move up.
+
 ---
 
-Previous: [AI strategy memo](ai-strategy-memo.md) · Next: [Discovery kit](discovery-kit.md) · Definitions: [Metrics glossary](metrics-glossary.md) · Full catalog: [GenAI and agentic metrics](genai-agentic-metrics.md) · See the [worked example](../examples/support-agent-worked-example.md#2-vision-and-north-star)
+Previous: [AI strategy memo](ai-strategy-memo.md) · Next: [Discovery kit](discovery-kit.md) · Definitions: [Metrics glossary](metrics-glossary.md) · Full catalog: [GenAI and agentic metrics](genai-agentic-metrics.md) · See the [worked example](../examples/support-agent-worked-example.md#2-vision)
